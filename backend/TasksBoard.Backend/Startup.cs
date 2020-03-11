@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 
 namespace TasksBoard.Backend
 {
@@ -25,7 +26,10 @@ namespace TasksBoard.Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services
+                .AddMvc(options => options.EnableEndpointRouting = false).Services
+                .AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo()))
+                .AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,16 +40,14 @@ namespace TasksBoard.Backend
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            app
+                .UseHttpsRedirection()
+                .UseAuthentication()
+                .UseRouting()
+                .UseSwagger()
+                .UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "Tasks board API")); ;
 
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }
