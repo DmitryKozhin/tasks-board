@@ -11,8 +11,8 @@ namespace TasksBoard.Backend.Middlewares
 {
     public class ExceptionsMiddleware
     {
-        private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionsMiddleware> _logger;
+        private readonly RequestDelegate _next;
 
         public ExceptionsMiddleware(RequestDelegate next, ILogger<ExceptionsMiddleware> logger)
         {
@@ -28,17 +28,17 @@ namespace TasksBoard.Backend.Middlewares
             }
             catch (NotImplementedException exception)
             {
-                _logger.LogError(exception, "Вызываемый метод не реализован.");
+                _logger.LogError(exception, "Member isn't implemented");
                 await HandleException(httpContext, exception);
             }
             catch (Exception exception)
             {
-                _logger.LogError(exception, "Ошибка сервера.");
+                _logger.LogError(exception, "Server error");
                 await HandleException(httpContext, exception);
             }
         }
 
-        private async Task HandleException(
+        private static async Task HandleException(
             HttpContext httpContext,
             Exception exception,
             int exceptionCode = 500)
@@ -47,9 +47,7 @@ namespace TasksBoard.Backend.Middlewares
             httpContext.Response.Headers.CopyTo(dict, 0);
             httpContext.Response.Clear();
             foreach (var header in dict)
-            {
                 httpContext.Response.Headers.Add(header);
-            }
 
             httpContext.Response.StatusCode = exceptionCode;
             await httpContext.Response.WriteAsync(exception.Message);
