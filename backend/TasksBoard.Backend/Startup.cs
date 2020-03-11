@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
+using TasksBoard.Backend.Middlewares;
+
 namespace TasksBoard.Backend
 {
     public class Startup
@@ -36,11 +38,10 @@ namespace TasksBoard.Backend
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app
+                .UseExceptionsMiddleware()
                 .UseHttpsRedirection()
                 .UseAuthentication()
                 .UseRouting()
