@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+using TasksBoard.UsersService.Dtos;
+
 namespace TasksBoard.UsersService.Controllers
 {
-    [Route("auth")]
     [ApiController]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
         private readonly ILogger<UsersController> _logger;
@@ -18,7 +20,7 @@ namespace TasksBoard.UsersService.Controllers
         }
 
         [HttpPost]
-        public Task Login()
+        public Task Login([FromBody] LoginData loginData)
         {
             throw new NotImplementedException();
         }

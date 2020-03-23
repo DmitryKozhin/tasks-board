@@ -1,46 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-using TasksBoard.Common.Dtos;
-using TasksBoard.UsersService.Dtos;
+using TasksBoard.Backend.Dtos;
 
-namespace TasksBoard.UsersService.Controllers
+namespace TasksBoard.Backend.Controllers
 {
+    [Route("api/tasks")]
     [ApiController]
-    [Route("api/users")]
-    public class UsersController : ControllerBase
+    public class TasksController : ControllerBase
     {
-        private readonly ILogger<UsersController> _logger;
+        private readonly ILogger<TasksController> _logger;
 
-        public UsersController(ILogger<UsersController> logger)
+        public TasksController(ILogger<TasksController> logger)
         {
             _logger = logger;
         }
 
         [HttpGet("{id}")]
-        public Task<UserDto> Get(Guid id)
+        public Task<TaskDto> Get(Guid id)
         {
             throw new NotImplementedException();
         }
 
         [HttpGet]
-        public Task<List<UserDto>> GetAll()
+        public Task<List<TaskDto>> GetAll()
         {
             throw new NotImplementedException();
         }
 
         [HttpPost]
-        public Task Create([FromBody] CreateUserDto createUserDto)
+        public Task Create([FromBody] CreateTaskDto createTaskDto)
         {
             throw new NotImplementedException();
         }
 
         [HttpPut("{id}")]
-        public Task<UserDto> Update(Guid id, [FromBody] CreateUserDto updateUserDto)
+        public Task<TaskDto> Update(Guid id, [FromBody] UpdateTaskDto updateTaskDto)
         {
             throw new NotImplementedException();
         }
