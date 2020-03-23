@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TasksBoard.Backend.DbContext.Tables
+namespace TasksBoard.Common.Entities
 {
     public abstract class BaseIdEntity
     {

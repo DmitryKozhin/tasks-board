@@ -18,7 +18,7 @@ namespace TasksBoard.Backend
         {
             var logDir = Environment.GetEnvironmentVariable("LOG_DIR");
             if (string.IsNullOrWhiteSpace(logDir))
-                throw new InvalidOperationException("Environment variable \"LOG_DIR\" isn't set.");
+                throw new InvalidOperationException("Environment variable \"LOG_DIR\" didn't set.");
 
             var totalLogFile = Path.Combine(logDir, "total.log");
             var dailyLogFile = Path.Combine(logDir, "daily.log");

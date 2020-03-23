@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using TasksBoard.Common.Entities;
+
 namespace TasksBoard.Backend.DbContext.Tables
 {
     public class Board : BaseIdEntity

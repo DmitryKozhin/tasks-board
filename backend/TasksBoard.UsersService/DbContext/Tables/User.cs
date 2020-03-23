@@ -1,6 +1,6 @@
-﻿using System;
+﻿using TasksBoard.Common.Entities;
 
-namespace TasksBoard.Backend.DbContext.Tables
+namespace TasksBoard.UsersService.DbContext.Tables
 {
     public class User : BaseIdEntity
     {
