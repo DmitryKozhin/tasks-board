@@ -16,5 +16,7 @@ namespace TasksBoard.Backend.Domain
 
         [JsonIgnore]
         public Column Column { get; set; }
+
+        public List<UserTask> AssignedUsers { get; set; }
     }
 }

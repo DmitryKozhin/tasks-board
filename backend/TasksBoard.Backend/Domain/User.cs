@@ -14,10 +14,10 @@ namespace TasksBoard.Backend.Domain
         public string Biography { get; set; }
 
         [JsonIgnore]
-        public List<Board> Boards { get; set; }
+        public List<UserBoard> Boards { get; set; }
         
         [JsonIgnore]
-        public List<Task> Tasks { get; set; }
+        public List<UserTask> Tasks { get; set; }
 
         [JsonIgnore]
         public byte[] Hash { get; set; }

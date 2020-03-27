@@ -2,10 +2,10 @@
 
 namespace TasksBoard.Backend.Domain
 {
-    public class TaskAssignedUser
+    public class UserTask
     {
-        public Guid AssignedUserId { get; set; }
-        public User AssignedUser { get; set; }
+        public Guid UserId { get; set; }
+        public User User { get; set; }
 
         public Guid TaskId { get; set; }
         public Task Task { get; set; }
