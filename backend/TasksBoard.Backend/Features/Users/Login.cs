@@ -68,14 +68,10 @@ namespace TasksBoard.Backend.Features.Users
             {
                 var user = await _context.Users.Where(x => x.Email == message.User.Email).SingleOrDefaultAsync(cancellationToken);
                 if (user == null)
-                {
                     throw new RestException(HttpStatusCode.Unauthorized, new { Error = "Invalid email / password." });
-                }
 
                 if (!user.Hash.SequenceEqual(_passwordHasher.Hash(message.User.Password, user.Salt)))
-                {
                     throw new RestException(HttpStatusCode.Unauthorized, new { Error = "Invalid email / password." });
-                }
 
                 var person = _mapper.Map<User, Person>(user);
                 person.Token = await _jwtTokenGenerator.CreateToken(person.Name);

@@ -29,9 +29,9 @@ namespace TasksBoard.Backend
     {
         private readonly AppSettings _appSettings;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, AppSettings.SourceType sourceType = AppSettings.SourceType.EnvironmentVariables)
         {
-            _appSettings = new AppSettings(AppSettings.SourceType.EnvironmentVariables, configuration);
+            _appSettings = new AppSettings(sourceType, configuration);
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
