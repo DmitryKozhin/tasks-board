@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 using TasksBoard.Backend.Domain;
 
-namespace TasksBoard.Backend.Infrastructure.EntityTypeConfigurations
+namespace TasksBoard.Backend.Infrastructure.Context
 {
     public class UserTaskEntityTypeConfiguration : IEntityTypeConfiguration<UserTask>
     {

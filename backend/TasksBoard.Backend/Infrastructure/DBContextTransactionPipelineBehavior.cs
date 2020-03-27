@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 
 using MediatR;
 
+using TasksBoard.Backend.Infrastructure.Context;
+
 namespace TasksBoard.Backend.Infrastructure
 {
     /// <summary>

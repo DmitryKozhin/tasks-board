@@ -1,23 +1,31 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
+
+using TasksBoard.Backend.Infrastructure.Initializers;
 
 namespace TasksBoard.Backend
 {
     public class Program
     {
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>())
-                .UseSerilog();
-        }
-
         public static void Main(string[] args)
         {
             LoggerInitiator.Init();
-            CreateHostBuilder(args).Build().Run();
+
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
+
+            var host = new WebHostBuilder()
+                .UseConfiguration(config)
+                .UseKestrel()
+                .UseUrls($"https://+:5000")
+                .UseStartup<Startup>()
+                .Build();
+
+            host.Run();
         }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 using TasksBoard.Backend.Domain;
 
-namespace TasksBoard.Backend.Infrastructure
+namespace TasksBoard.Backend.Infrastructure.Context
 {
     public sealed class TasksBoardContext : DbContext
     {

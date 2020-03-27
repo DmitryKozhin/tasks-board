@@ -4,7 +4,7 @@ using System.IO;
 using Serilog;
 using Serilog.Events;
 
-namespace TasksBoard.Backend
+namespace TasksBoard.Backend.Infrastructure.Initializers
 {
     /// <summary>
     /// Helper class with logic for logger initialize.
@@ -16,12 +16,12 @@ namespace TasksBoard.Backend
         /// </summary>
         public static void Init()
         {
-            var logDir = Environment.GetEnvironmentVariable("LOG_DIR");
-            if (string.IsNullOrWhiteSpace(logDir))
-                throw new InvalidOperationException("Environment variable \"LOG_DIR\" didn't set.");
+            var appSetting = new AppSettings(AppSettings.SourceType.EnvironmentVariables);
+            if (string.IsNullOrWhiteSpace(appSetting.LogDirectory))
+                throw new InvalidOperationException("Unknown directory to log");
 
-            var totalLogFile = Path.Combine(logDir, "total.log");
-            var dailyLogFile = Path.Combine(logDir, "daily.log");
+            var totalLogFile = Path.Combine(appSetting.LogDirectory, "total.log");
+            var dailyLogFile = Path.Combine(appSetting.LogDirectory, "daily.log");
 
             InitInner(totalLogFile, dailyLogFile);
         }
