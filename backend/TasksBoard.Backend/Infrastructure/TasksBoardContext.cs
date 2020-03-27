@@ -12,9 +12,7 @@ namespace TasksBoard.Backend.Infrastructure
         }
 
         public DbSet<Task> Tasks { get; set; }
-        public DbSet<ColumnTask> ColumnTasks { get; set; }
         public DbSet<Board> Boards { get; set; }
-        public DbSet<BoardColumn> BoardColumns { get; set; }
         public DbSet<Column> Columns { get; set; }
 
         public void BeginTransaction()
