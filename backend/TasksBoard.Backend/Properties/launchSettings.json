@@ -12,9 +12,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "swagger",
       "environmentVariables": {
-        "LOG_DIR": "Logs",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

@@ -14,7 +14,7 @@ namespace TasksBoard.Backend.Infrastructure
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GetCurrentUsername()
+        public string GetCurrentName()
         {
             return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
         }

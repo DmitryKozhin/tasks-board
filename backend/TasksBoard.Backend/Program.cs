@@ -21,8 +21,9 @@ namespace TasksBoard.Backend
             var host = new WebHostBuilder()
                 .UseConfiguration(config)
                 .UseKestrel()
-                .UseUrls($"https://+:5000")
+                .UseUrls($"http://+:5000")
                 .UseStartup<Startup>()
+                .UseSerilog()
                 .Build();
 
             host.Run();
