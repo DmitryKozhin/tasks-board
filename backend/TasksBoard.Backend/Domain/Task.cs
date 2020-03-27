@@ -6,6 +6,11 @@ namespace TasksBoard.Backend.Domain
 {
     public class Task
     {
+        public Task()
+        {
+            AssignedUsers = new HashSet<UserTask>();
+        }
+
         public Guid Id { get; set; }
         public string Header { get; set; }
         public string Description { get; set; }
@@ -17,6 +22,6 @@ namespace TasksBoard.Backend.Domain
         [JsonIgnore]
         public Column Column { get; set; }
 
-        public List<UserTask> AssignedUsers { get; set; }
+        public ICollection<UserTask> AssignedUsers { get; set; }
     }
 }

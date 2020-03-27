@@ -7,6 +7,12 @@ namespace TasksBoard.Backend.Domain
 {
     public class User
     {
+        public User()
+        {
+            Boards = new HashSet<UserBoard>();
+            Tasks = new HashSet<UserTask>();
+        }
+
         [JsonIgnore]
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -14,10 +20,10 @@ namespace TasksBoard.Backend.Domain
         public string Biography { get; set; }
 
         [JsonIgnore]
-        public List<UserBoard> Boards { get; set; }
+        public ICollection<UserBoard> Boards { get; set; }
         
         [JsonIgnore]
-        public List<UserTask> Tasks { get; set; }
+        public ICollection<UserTask> Tasks { get; set; }
 
         [JsonIgnore]
         public byte[] Hash { get; set; }

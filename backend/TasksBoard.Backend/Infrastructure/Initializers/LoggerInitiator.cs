@@ -34,7 +34,7 @@ namespace TasksBoard.Backend.Infrastructure.Initializers
         private static void InitInner(string totalLogFile, string dailyLogFile)
         {
             Log.Logger = new LoggerConfiguration()
-                            .MinimumLevel.Debug()
+                            .MinimumLevel.Information()
                             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                             .Enrich.FromLogContext()
                             .WriteTo.Console()

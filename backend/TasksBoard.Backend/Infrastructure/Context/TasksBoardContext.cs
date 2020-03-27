@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Reflection;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -10,7 +9,13 @@ namespace TasksBoard.Backend.Infrastructure.Context
 {
     public sealed class TasksBoardContext : DbContext
     {
+        public const string SCHEMA_NAME = "TasksBoardContext";
+
         private IDbContextTransaction _currentTransaction;
+
+        public TasksBoardContext()
+        {
+        }
 
         public TasksBoardContext(DbContextOptions options)
             : base(options)
@@ -20,16 +25,24 @@ namespace TasksBoard.Backend.Infrastructure.Context
         public DbSet<Board> Boards { get; set; }
         public DbSet<Column> Columns { get; set; }
         public DbSet<Comment> Comments { get; set; }
-
         public DbSet<Task> Tasks { get; set; }
-        public DbSet<UserBoard> UserBoards { get; set; }
         public DbSet<User> Users { get; set; }
 
         public DbSet<UserTask> UserTasks { get; set; }
+        public DbSet<UserBoard> UserBoards { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var appSetting = new AppSettings(AppSettings.SourceType.EnvironmentVariables);
+            optionsBuilder.UseNpgsql(appSetting.MasterDatabaseConnectionString);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            modelBuilder.HasDefaultSchema(SCHEMA_NAME);
+
+            modelBuilder.ApplyConfiguration(new UserBoardEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new UserTaskEntityTypeConfiguration());
         }
 
         #region Transaction Handling

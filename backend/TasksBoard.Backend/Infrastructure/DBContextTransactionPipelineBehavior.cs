@@ -17,14 +17,14 @@ namespace TasksBoard.Backend.Infrastructure
     {
         private readonly TasksBoardContext _context;
 
-        public DbContextTransactionPipelineBehavior(TasksBoardContext context)
+        public DbContextTransactionPipelineBehavior(IDbContextInjector injector)
         {
-            _context = context;
+            _context = injector.WriteContext;
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
         {
-            TResponse result = default(TResponse);
+            TResponse result;
 
             try
             {

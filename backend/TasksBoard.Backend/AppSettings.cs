@@ -13,6 +13,7 @@ namespace TasksBoard.Backend
         public AppSettings(SourceType sourceType)
         {
             Source = sourceType;
+            ReadSettings();
         }
 
         public AppSettings(SourceType sourceType, IConfiguration configuration)
