@@ -1,7 +1,5 @@
 ﻿using System;
 
-using TasksBoard.Common.Entities;
-
 namespace TasksBoard.Backend.DbContext.Tables
 {
     public class Task : BaseIdEntity

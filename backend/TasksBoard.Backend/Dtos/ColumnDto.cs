@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using TasksBoard.Common.Entities;
+using TasksBoard.Backend.DbContext;
 
 namespace TasksBoard.Backend.Dtos
 {
