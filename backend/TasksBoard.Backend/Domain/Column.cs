@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TasksBoard.Backend.DbContext.Tables
+namespace TasksBoard.Backend.Domain
 {
     public class Column : BaseIdEntity
     {
@@ -9,10 +9,7 @@ namespace TasksBoard.Backend.DbContext.Tables
         public string Color { get; set; }
         public int OrderNum { get; set; }
 
-        public List<Guid> TaskIds { get; set; }
-        public List<ColumnTask> Tasks { get; set; }
-
-        public Guid BoardId { get; set; }
+        public List<Task> Tasks { get; set; }
         public Board Board { get; set; }
     }
 }

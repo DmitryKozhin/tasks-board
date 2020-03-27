@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TasksBoard.Backend.DbContext.Tables
+namespace TasksBoard.Backend.Domain
 {
     public class Task : BaseIdEntity
     {
@@ -8,10 +8,8 @@ namespace TasksBoard.Backend.DbContext.Tables
         public string Description { get; set; }
         public int OrderNum { get; set; }
 
-        public Guid OwnerId { get; set; }
-        public Guid? AssignedToId { get; set; }
+        public User Owner { get; set; }
 
-        public Guid ColumnId { get; set; }
         public Column Column { get; set; }
     }
 }
