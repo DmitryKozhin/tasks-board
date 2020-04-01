@@ -38,6 +38,8 @@ namespace TasksBoard.Tests.Features.Users
             var created = await ExecuteDbContextAsync(db => db.Users.Where(d => d.Email == command.User.Email).SingleOrDefaultAsync());
 
             created.Should().NotBeNull();
+            created.Email.Should().BeEquivalentTo(command.User.Email);
+            created.Name.Should().BeEquivalentTo(command.User.Name);
             created.Hash.Should().BeEquivalentTo(new PasswordHasher().Hash("password", created.Salt));
         }
     }
