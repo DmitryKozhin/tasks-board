@@ -65,6 +65,7 @@ namespace TasksBoard.Backend.Infrastructure.Errors
                 errors
             });
 
+            logger.Log(LogLevel.Error, exception, exception.Message);
             await context.Response.WriteAsync(result);
         }
     }

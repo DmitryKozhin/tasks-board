@@ -77,8 +77,15 @@ namespace TasksBoard.Backend.Features.Tasks
                 if (request.Task.OrderNum.TryGetValue(out var orderNum))
                     task.OrderNum = orderNum;
 
-                if (request.Task.ColumnId.TryGetValue(out var columnId))
+                if (request.Task.ColumnId.TryGetValue(out var columnId) && task.ColumnId != columnId)
+                {
+                    var oldColumn = await _context.Columns.SingleAsync(t => t.Id == task.ColumnId, cancellationToken);
+                    var newColumn = await _context.Columns.SingleAsync(t => t.Id == columnId, cancellationToken);
+                    oldColumn.Tasks.Remove(task);
+                    newColumn.Tasks.Add(task);
+
                     task.ColumnId = columnId;
+                }
 
                 await _context.SaveChangesAsync(cancellationToken);
 

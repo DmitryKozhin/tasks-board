@@ -32,7 +32,7 @@ namespace TasksBoard.Backend.Features.Tasks
 
         public class QueryHandler : IRequestHandler<Query, TasksEnvelope>
         {
-            private TasksBoardContext _context;
+            private readonly TasksBoardContext _context;
 
             public QueryHandler(IDbContextInjector dbContextInjector)
             {

@@ -116,6 +116,7 @@ namespace TasksBoard.Backend
                     .AllowAnyMethod());
 
             app.UseMvc();
+            app.UseAuthentication();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint
             app.UseSwagger(c => { c.RouteTemplate = "swagger/{documentName}/swagger.json"; });
