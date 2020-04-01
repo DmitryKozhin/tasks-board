@@ -13,16 +13,14 @@ namespace TasksBoard.Backend.Features.Tasks
     {
         public class Query : IRequest<TasksEnvelope>
         {
-            public Query(List<Guid> taskIds, Guid? assignedUserId, Guid? columnId)
+            public Query(List<Guid> taskIds, Guid? assignedUserId)
             {
                 TaskIds = taskIds;
                 AssignedUserId = assignedUserId;
-                ColumnId = columnId;
             }
 
             public Guid? AssignedUserId { get; }
 
-            public Guid? ColumnId { get; }
             public List<Guid> TaskIds { get; }
         }
 

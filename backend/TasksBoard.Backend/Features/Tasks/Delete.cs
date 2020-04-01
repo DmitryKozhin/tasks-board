@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 using FluentValidation;
 
 using MediatR;
 
 using TasksBoard.Backend.Infrastructure.Context;
+using TasksBoard.Backend.Infrastructure.Errors;
 
 namespace TasksBoard.Backend.Features.Tasks
 {
@@ -40,9 +41,16 @@ namespace TasksBoard.Backend.Features.Tasks
                 _context = dbContextInjector.WriteContext;
             }
 
-            public Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                throw new NotImplementedException();
+                var task = await _context.Tasks.FindAsync(request.TaskId);
+
+                if (task == null)
+                    throw new RestException(HttpStatusCode.NotFound, new { Task = Constants.NOT_FOUND });
+
+                _context.Tasks.Remove(task);
+                await _context.SaveChangesAsync(cancellationToken);
+                return Unit.Value;
             }
         }
     }
