@@ -79,7 +79,7 @@ namespace TasksBoard.Backend.Features.Users
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return new UserEnvelope(_mapper.Map<User, Person>(user));
+                return new UserEnvelope(_mapper.Map<User, PublicUser>(user));
             }
         }
     }

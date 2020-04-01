@@ -87,7 +87,7 @@ namespace TasksBoard.Backend.Features.Users
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync(cancellationToken);
-                var person = _mapper.Map<User, Person>(user);
+                var person = _mapper.Map<User, PublicUser>(user);
                 person.Token = await _jwtTokenGenerator.CreateToken(person.Name);
                 return new UserEnvelope(person);
             }

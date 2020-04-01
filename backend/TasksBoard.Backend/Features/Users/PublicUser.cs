@@ -1,6 +1,6 @@
 ﻿namespace TasksBoard.Backend.Features.Users
 {
-    public class Person
+    public class PublicUser
     {
         public string Name { get; set; }
 
@@ -13,11 +13,11 @@
 
     public class UserEnvelope
     {
-        public UserEnvelope(Person user)
+        public UserEnvelope(PublicUser user)
         {
             User = user;
         }
 
-        public Person User { get; set; }
+        public PublicUser User { get; set; }
     }
 }

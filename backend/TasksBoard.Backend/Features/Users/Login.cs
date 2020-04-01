@@ -73,7 +73,7 @@ namespace TasksBoard.Backend.Features.Users
                 if (!user.Hash.SequenceEqual(_passwordHasher.Hash(message.User.Password, user.Salt)))
                     throw new RestException(HttpStatusCode.Unauthorized, new { Error = "Invalid email / password." });
 
-                var person = _mapper.Map<User, Person>(user);
+                var person = _mapper.Map<User, PublicUser>(user);
                 person.Token = await _jwtTokenGenerator.CreateToken(person.Name);
                 return new UserEnvelope(person);
             }

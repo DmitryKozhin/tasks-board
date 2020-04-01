@@ -8,7 +8,7 @@ namespace TasksBoard.Backend.Features.Users
     {
         public MappingProfile()
         {
-            CreateMap<User, Person>(MemberList.None);
+            CreateMap<User, PublicUser>(MemberList.None);
         }
     }
 }

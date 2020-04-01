@@ -55,7 +55,7 @@ namespace TasksBoard.Backend.Features.Users
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, new { User = Constants.NOT_FOUND });
 
-                var person = _mapper.Map<User, Person>(user);
+                var person = _mapper.Map<User, PublicUser>(user);
                 person.Token = await _jwtTokenGenerator.CreateToken(person.Name);
                 return new UserEnvelope(person);
             }
