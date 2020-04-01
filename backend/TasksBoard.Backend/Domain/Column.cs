@@ -19,6 +19,8 @@ namespace TasksBoard.Backend.Domain
         public ICollection<Task> Tasks { get; set; }
 
         [JsonIgnore]
+        public Guid BoardId { get; set; }
+        [JsonIgnore]
         public Board Board { get; set; }
     }
 }

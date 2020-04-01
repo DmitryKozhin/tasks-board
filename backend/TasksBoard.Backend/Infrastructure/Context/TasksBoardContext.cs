@@ -31,11 +31,11 @@ namespace TasksBoard.Backend.Infrastructure.Context
         public DbSet<UserTask> UserTasks { get; set; }
         public DbSet<UserBoard> UserBoards { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    var appSetting = new AppSettings(AppSettings.SourceType.EnvironmentVariables);
-        //    optionsBuilder.UseNpgsql(appSetting.MasterDatabaseConnectionString);
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var appSetting = new AppSettings(AppSettings.SourceType.EnvironmentVariables);
+            optionsBuilder.UseNpgsql(appSetting.MasterDatabaseConnectionString);
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
