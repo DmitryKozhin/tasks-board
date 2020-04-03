@@ -31,7 +31,6 @@ namespace TasksBoard.Backend.Features.Tasks
         {
             public TaskData Task { get; set; }
             public Guid TaskId { get; set; }
-
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -54,6 +53,7 @@ namespace TasksBoard.Backend.Features.Tasks
 
             public async Task<TaskEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
+                //TODO: add check current user.
                 var task = await _context.Tasks.SingleAsync(t => t.Id == request.TaskId, cancellationToken);
 
                 if (request.Task.AssignedUsers != null)

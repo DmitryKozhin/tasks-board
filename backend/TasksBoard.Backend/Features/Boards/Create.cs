@@ -63,6 +63,9 @@ namespace TasksBoard.Backend.Features.Boards
                 var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_currentUserAccessor.GetCurrentUserEmail()), cancellationToken);
                 var board = new Board(){ Name = request.Board.Name, OwnerId = owner.Id };
                 await _context.Boards.AddAsync(board, cancellationToken);
+                await _context.UserBoards.AddAsync(new UserBoard() { BoardId = board.Id, UserId = owner.Id },
+                    cancellationToken);
+
                 await _context.SaveChangesAsync(cancellationToken);
 
                 return new BoardEnvelope(board);

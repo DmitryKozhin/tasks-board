@@ -56,6 +56,7 @@ namespace TasksBoard.Backend.Features.Boards
 
             public async Task<BoardEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
+                //TODO: add check current user.
                 var board = await _context.Boards
                     .Include(t => t.Columns)
                     .Include(t => t.UserBoards)
