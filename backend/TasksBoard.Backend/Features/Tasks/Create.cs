@@ -62,7 +62,7 @@ namespace TasksBoard.Backend.Features.Tasks
 
             public async Task<TaskEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_userAccessor.GetCurrentName()), cancellationToken);
+                var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_userAccessor.GetCurrentEmail()), cancellationToken);
                 var column = await _context.Columns.SingleAsync(t => t.Id == request.Task.ColumnId, cancellationToken);
                 var task = new Task()
                 {

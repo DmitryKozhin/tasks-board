@@ -24,7 +24,7 @@ namespace TasksBoard.Backend.Features.Tasks
             public string Description { get; set; }
             public Guid? ColumnId { get; set; }
             public int? OrderNum { get; set; }
-            public List<Guid> AssignedUserIds { get; set; }
+            public List<string> AssignedUsers { get; set; }
         }
 
         public class Command : IRequest<TaskEnvelope>
@@ -56,10 +56,11 @@ namespace TasksBoard.Backend.Features.Tasks
             {
                 var task = await _context.Tasks.SingleAsync(t => t.Id == request.TaskId, cancellationToken);
 
-                if (request.Task.AssignedUserIds != null)
+                if (request.Task.AssignedUsers != null)
                 {
+                    var neededUsers = _context.Users.Where(t => request.Task.AssignedUsers.Contains(t.Email));
                     var assignedUsers =
-                        request.Task.AssignedUserIds.Select(t => new UserTask() { TaskId = task.Id, UserId = t })
+                        neededUsers.Select(t => new UserTask() { TaskId = task.Id, UserId = t.Id })
                             .ToList();
 
                     var unAssignedUsers = _context.UserTasks.Except(assignedUsers);

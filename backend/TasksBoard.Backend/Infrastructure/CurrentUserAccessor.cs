@@ -14,9 +14,9 @@ namespace TasksBoard.Backend.Infrastructure
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GetCurrentName()
+        public string GetCurrentEmail()
         {
-            return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
         }
     }
 }

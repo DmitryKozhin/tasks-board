@@ -29,7 +29,7 @@ namespace TasksBoard.Backend.Features.Users
         {
             return await _mediator.Send(new Details.Query()
             {
-                Name = _currentUserAccessor.GetCurrentName()
+                Name = _currentUserAccessor.GetCurrentEmail()
             });
         }
 

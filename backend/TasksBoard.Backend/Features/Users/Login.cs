@@ -74,7 +74,7 @@ namespace TasksBoard.Backend.Features.Users
                     throw new RestException(HttpStatusCode.Unauthorized, new { Error = "Invalid email / password." });
 
                 var person = _mapper.Map<User, PublicUser>(user);
-                person.Token = await _jwtTokenGenerator.CreateToken(person.Name);
+                person.Token = await _jwtTokenGenerator.CreateToken(person.Email);
                 return new UserEnvelope(person);
             }
         }
