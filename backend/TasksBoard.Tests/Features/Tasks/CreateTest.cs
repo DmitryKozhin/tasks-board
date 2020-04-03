@@ -6,10 +6,13 @@ using FluentAssertions;
 
 using Microsoft.EntityFrameworkCore;
 
+using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Features.Tasks;
 
 using Xunit;
 using Xunit.Abstractions;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace TasksBoard.Tests.Features.Tasks
 {
@@ -22,13 +25,14 @@ namespace TasksBoard.Tests.Features.Tasks
         [Fact]
         public async Task CreateTask_TaskWasCreatedSuccessfully()
         {
-            // create column before task.
+            var userId = await CreateDefaultUser();
+            var columnId = await CreateColumn(userId);
 
             var command = new Create.Command()
             {
                 Task = new Create.TaskData()
                 {
-                    ColumnId = Guid.Empty,
+                    ColumnId = columnId,
                     Description = "description",
                     Header = "header"
                 }
@@ -42,6 +46,19 @@ namespace TasksBoard.Tests.Features.Tasks
             created.Header.Should().BeEquivalentTo(command.Task.Header);
             created.ColumnId.Should().Be(command.Task.ColumnId);
             created.Description.Should().BeEquivalentTo(command.Task.Description);
+        }
+
+        private async Task<Guid> CreateColumn(Guid userId)
+        {
+            var board = new Board() { Name = "test_board", OwnerId = userId };
+            await ContextInjector.WriteContext.Boards.AddAsync(board);
+            await ContextInjector.WriteContext.SaveChangesAsync();
+
+            var column = new Column() { Header = "test_column", BoardId = board.Id, OwnerId = userId };
+            await ContextInjector.WriteContext.Columns.AddAsync(column);
+            await ContextInjector.WriteContext.SaveChangesAsync();
+
+            return column.Id;
         }
     }
 }

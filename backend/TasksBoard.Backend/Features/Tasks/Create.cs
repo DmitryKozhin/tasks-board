@@ -69,7 +69,7 @@ namespace TasksBoard.Backend.Features.Tasks
                     ColumnId = column.Id,
                     Header = request.Task.Header,
                     Description = request.Task.Description,
-                    OrderNum = column.Tasks.Max(t => t.OrderNum) + 1,
+                    OrderNum = GetNewOrderNumber(column.Tasks),
                     OwnerId = owner.Id,
                 };
 
@@ -77,6 +77,14 @@ namespace TasksBoard.Backend.Features.Tasks
                 await _context.UserTasks.AddAsync(new UserTask() { TaskId = task.Id, UserId = owner.Id }, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
                 return new TaskEnvelope(task);
+            }
+
+            private static int GetNewOrderNumber(ICollection<Task> tasks)
+            {
+                if (tasks.Any())
+                    return tasks.Max(t => t.OrderNum) + 1;
+
+                return default;
             }
         }
     }

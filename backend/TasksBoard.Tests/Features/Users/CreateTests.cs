@@ -6,7 +6,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
 using TasksBoard.Backend.Features.Users;
-using TasksBoard.Backend.Infrastructure.Initializers;
 using TasksBoard.Backend.Infrastructure.Security;
 
 using Xunit;
