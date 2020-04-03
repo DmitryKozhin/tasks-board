@@ -1,19 +1,29 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using Moq;
 
 using Serilog;
 
 using TasksBoard.Backend;
+using TasksBoard.Backend.Domain;
+using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
 using TasksBoard.Backend.Infrastructure.Initializers;
 
 using Xunit;
 using Xunit.Abstractions;
+
+using Task = System.Threading.Tasks.Task;
 
 namespace TasksBoard.Tests
 {
@@ -35,6 +45,8 @@ namespace TasksBoard.Tests
         {
             var startup = new Startup(Config, AppSettings.SourceType.TestEnvironmentVariables);
             var services = new ServiceCollection();
+
+            AddICurrentUserAccessor(services);
 
             startup.ConfigureServices(services);
             var provider = services.BuildServiceProvider();
@@ -113,6 +125,38 @@ namespace TasksBoard.Tests
 
                 return mediator.Send(request);
             });
+        }
+
+        private static void AddICurrentUserAccessor(ServiceCollection services)
+        {
+            var context = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new ClaimsPrincipal(new List<ClaimsIdentity>()
+                {
+                    new ClaimsIdentity(new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.Email, "email")
+                    })
+                }))
+            };
+
+            var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+            mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(context);
+            services.AddSingleton(mockHttpContextAccessor.Object);
+        }
+
+        protected async Task<Guid> CreateDefaultUser()
+        {
+            var user = new User()
+            {
+                Email = "email",
+                Name = "username"
+            };
+
+            await ContextInjector.WriteContext.Users.AddAsync(user);
+            await ContextInjector.WriteContext.SaveChangesAsync();
+
+            return user.Id;
         }
     }
 }

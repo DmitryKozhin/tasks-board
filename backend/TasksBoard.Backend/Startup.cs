@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
@@ -97,8 +98,8 @@ namespace TasksBoard.Backend
 
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<ICurrentUserAccessor, CurrentUserAccessor>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             services.AddJwt();
         }
