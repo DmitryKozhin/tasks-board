@@ -27,9 +27,9 @@ namespace TasksBoard.Backend.Features.Tasks
             public Guid ColumnId { get; set; }
         }
 
-        public class UserDataValidator : AbstractValidator<TaskData>
+        public class TaskDataValidator : AbstractValidator<TaskData>
         {
-            public UserDataValidator()
+            public TaskDataValidator()
             {
                 RuleFor(x => x.Header).NotNull().NotEmpty();
                 RuleFor(x => x.ColumnId).NotNull().NotEmpty();
@@ -45,7 +45,7 @@ namespace TasksBoard.Backend.Features.Tasks
         {
             public CommandValidator()
             {
-                RuleFor(x => x.Task).NotNull().SetValidator(new UserDataValidator());
+                RuleFor(x => x.Task).NotNull().SetValidator(new TaskDataValidator());
             }
         }
 
@@ -62,7 +62,7 @@ namespace TasksBoard.Backend.Features.Tasks
 
             public async Task<TaskEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_userAccessor.GetCurrentEmail()), cancellationToken);
+                var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_userAccessor.GetCurrentUserEmail()), cancellationToken);
                 var column = await _context.Columns.SingleAsync(t => t.Id == request.Task.ColumnId, cancellationToken);
                 var task = new Task()
                 {
@@ -74,6 +74,7 @@ namespace TasksBoard.Backend.Features.Tasks
                 };
 
                 await _context.Tasks.AddAsync(task, cancellationToken);
+                await _context.UserTasks.AddAsync(new UserTask() { TaskId = task.Id, UserId = owner.Id }, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
                 return new TaskEnvelope(task);
             }

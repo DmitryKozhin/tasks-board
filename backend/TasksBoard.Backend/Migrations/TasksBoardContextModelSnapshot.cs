@@ -29,7 +29,12 @@ namespace TasksBoard.Backend.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Boards");
                 });
@@ -52,9 +57,14 @@ namespace TasksBoard.Backend.Migrations
                     b.Property<int>("OrderNum")
                         .HasColumnType("integer");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BoardId");
+
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Columns");
                 });
@@ -174,11 +184,26 @@ namespace TasksBoard.Backend.Migrations
                     b.ToTable("UserTasks");
                 });
 
+            modelBuilder.Entity("TasksBoard.Backend.Domain.Board", b =>
+                {
+                    b.HasOne("TasksBoard.Backend.Domain.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TasksBoard.Backend.Domain.Column", b =>
                 {
                     b.HasOne("TasksBoard.Backend.Domain.Board", "Board")
                         .WithMany("Columns")
                         .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TasksBoard.Backend.Domain.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

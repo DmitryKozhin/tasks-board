@@ -1,12 +1,18 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 using FluentValidation;
 
 using MediatR;
 
+using Microsoft.EntityFrameworkCore;
+
 using TasksBoard.Backend.Domain;
+using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
+using TasksBoard.Backend.Infrastructure.Errors;
 
 namespace TasksBoard.Backend.Features.Boards
 {
@@ -17,9 +23,9 @@ namespace TasksBoard.Backend.Features.Boards
             public string Name { get; set; }
         }
 
-        public class UserDataValidator : AbstractValidator<BoardData>
+        public class BoardDataValidator : AbstractValidator<BoardData>
         {
-            public UserDataValidator()
+            public BoardDataValidator()
             {
                 RuleFor(x => x.Name).NotNull().NotEmpty();
             }
@@ -34,22 +40,32 @@ namespace TasksBoard.Backend.Features.Boards
         {
             public CommandValidator()
             {
-                RuleFor(x => x.Board).NotNull().SetValidator(new UserDataValidator());
+                RuleFor(x => x.Board).NotNull().SetValidator(new BoardDataValidator());
             }
         }
 
         public class Handler : IRequestHandler<Command, BoardEnvelope>
         {
+            private readonly ICurrentUserAccessor _currentUserAccessor;
             private readonly TasksBoardContext _context;
 
-            public Handler(IDbContextInjector dbContextInjector)
+            public Handler(IDbContextInjector dbContextInjector, ICurrentUserAccessor currentUserAccessor)
             {
+                _currentUserAccessor = currentUserAccessor;
                 _context = dbContextInjector.WriteContext;
             }
 
             public async Task<BoardEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                throw new System.NotImplementedException();
+                if (await _context.Boards.Where(x => x.Name == request.Board.Name).AnyAsync(cancellationToken))
+                    throw new RestException(HttpStatusCode.BadRequest, new { Name = Constants.IN_USE });
+
+                var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_currentUserAccessor.GetCurrentUserEmail()), cancellationToken);
+                var board = new Board(){ Name = request.Board.Name, OwnerId = owner.Id };
+                await _context.Boards.AddAsync(board, cancellationToken);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return new BoardEnvelope(board);
             }
         }
     }

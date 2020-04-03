@@ -63,7 +63,7 @@ namespace TasksBoard.Backend.Features.Users
 
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
-                var currentUsername = _currentUserAccessor.GetCurrentEmail();
+                var currentUsername = _currentUserAccessor.GetCurrentUserEmail();
                 var user = await _context.Users.Where(x => x.Email == currentUsername).FirstOrDefaultAsync(cancellationToken);
 
                 user.Name = message.User.Name ?? user.Name;
