@@ -145,13 +145,13 @@ namespace TasksBoard.Tests
             services.AddSingleton(mockHttpContextAccessor.Object);
         }
 
-        protected async Task<Guid> CreateDefaultUser()
+        protected async Task<Guid> CreateUser(string email = "email", string name = "name", string bio = "bio")
         {
             var user = new User()
             {
-                Email = "email",
-                Name = "username",
-                Biography = "biography"
+                Email = email,
+                Name = name,
+                Biography = bio
             };
 
             await ContextInjector.WriteContext.Users.AddAsync(user);

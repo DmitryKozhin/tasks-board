@@ -71,15 +71,15 @@ namespace TasksBoard.Backend.Features.Boards
                     await HandleColumns(request.Board.RemovedColumns, t => board.Columns.Remove(t), cancellationToken);
 
                 if (request.Board.AddedColumns?.Any() == true)
-                    await HandleColumns(request.Board.AddedColumns, t => board.Columns.Add(t), cancellationToken);
+                    await HandleColumns(request.Board.AddedColumns, board.Columns.Add, cancellationToken);
 
                 if (request.Board.AddedUsers?.Any() == true)
                     await HandleUsers(request.Board.AddedUsers, 
-                        t => board.UserBoards.Add(new UserBoard() { BoardId = request.BoardId, UserId = t.Id }), cancellationToken);
+                        board.UserBoards.Add, cancellationToken);
 
                 if (request.Board.RemovedUsers?.Any() == true)
                     await HandleUsers(request.Board.RemovedUsers, 
-                        t => board.UserBoards.Remove(new UserBoard() { BoardId = request.BoardId, UserId = t.Id }), cancellationToken);
+                        t => board.UserBoards.Remove(t), cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return new BoardEnvelope(board);
@@ -91,10 +91,10 @@ namespace TasksBoard.Backend.Features.Boards
                 await columns.ForEachAsync(handle, cancellationToken);
             }
 
-            private async Task HandleUsers(List<string> userEmails, Action<User> handle, CancellationToken cancellationToken)
+            private async Task HandleUsers(List<string> userEmails, Action<UserBoard> handle, CancellationToken cancellationToken)
             {
-                var usersToAdd = _context.Users.Where(t => userEmails.Contains(t.Email));
-                await usersToAdd.ForEachAsync(handle, cancellationToken);
+                var users = _context.UserBoards.Include(t => t.User).Where(t => userEmails.Contains(t.User.Email));
+                await users.ForEachAsync(handle, cancellationToken);
             }
         }
     }

@@ -20,9 +20,9 @@ namespace TasksBoard.Tests.Features.Users
         }
 
         [Fact]
-        public async Task Create_UserWasUpdatedSuccessfully()
+        public async Task Edit_UserWasUpdatedSuccessfully()
         {
-            await CreateDefaultUser();
+            await CreateUser();
 
             var command = new Edit.Command
             {

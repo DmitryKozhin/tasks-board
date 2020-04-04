@@ -39,7 +39,7 @@ namespace TasksBoard.Tests.Features.Users
             created.Should().NotBeNull();
             created.Email.Should().BeEquivalentTo(command.User.Email);
             created.Name.Should().BeEquivalentTo(command.User.Name);
-            created.Hash.Should().BeEquivalentTo(new PasswordHasher().Hash("password", created.Salt));
+            created.Hash.Should().BeEquivalentTo(new PasswordHasher().Hash(command.User.Password, created.Salt));
         }
     }
 }

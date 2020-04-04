@@ -25,8 +25,9 @@ namespace TasksBoard.Tests.Features.Tasks
         [Fact]
         public async Task CreateTask_TaskWasCreatedSuccessfully()
         {
-            var userId = await CreateDefaultUser();
-            var columnId = await CreateColumn(userId);
+            var userId = await CreateUser();
+            var columnId = await TaskTestHelper.CreateColumn(
+                ContextInjector.WriteContext, userId, "test_board", "test_column");
 
             var command = new Create.Command()
             {
@@ -46,19 +47,6 @@ namespace TasksBoard.Tests.Features.Tasks
             created.Header.Should().BeEquivalentTo(command.Task.Header);
             created.ColumnId.Should().Be(command.Task.ColumnId);
             created.Description.Should().BeEquivalentTo(command.Task.Description);
-        }
-
-        private async Task<Guid> CreateColumn(Guid userId)
-        {
-            var board = new Board() { Name = "test_board", OwnerId = userId };
-            await ContextInjector.WriteContext.Boards.AddAsync(board);
-            await ContextInjector.WriteContext.SaveChangesAsync();
-
-            var column = new Column() { Header = "test_column", BoardId = board.Id, OwnerId = userId };
-            await ContextInjector.WriteContext.Columns.AddAsync(column);
-            await ContextInjector.WriteContext.SaveChangesAsync();
-
-            return column.Id;
         }
     }
 }

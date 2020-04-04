@@ -14,6 +14,8 @@ using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
 
+using Task = System.Threading.Tasks.Task;
+
 namespace TasksBoard.Backend.Features.Tasks
 {
     public class Edit
@@ -25,6 +27,7 @@ namespace TasksBoard.Backend.Features.Tasks
             public Guid? ColumnId { get; set; }
             public int? OrderNum { get; set; }
             public List<string> AssignedUsers { get; set; }
+            public List<string> UnAssignedUsers { get; set; }
         }
 
         public class Command : IRequest<TaskEnvelope>
@@ -53,25 +56,34 @@ namespace TasksBoard.Backend.Features.Tasks
 
             public async Task<TaskEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                var task = await _context.Tasks.SingleAsync(t => t.Id == request.TaskId, cancellationToken);
-
-                if (request.Task.AssignedUsers != null)
-                {
-                    var neededUsers = _context.Users.Where(t => request.Task.AssignedUsers.Contains(t.Email));
-                    var assignedUsers =
-                        neededUsers.Select(t => new UserTask() { TaskId = task.Id, UserId = t.Id })
-                            .ToList();
-
-                    var unAssignedUsers = _context.UserTasks.Except(assignedUsers);
-
-                    _context.UserTasks.RemoveRange(unAssignedUsers);
-                    await _context.UserTasks.AddRangeAsync(assignedUsers, cancellationToken);
-                }
+                var task = await _context.Tasks
+                    .Include(t => t.AssignedUsers)
+                    .ThenInclude(t => t.User)
+                    .SingleAsync(t => t.Id == request.TaskId, cancellationToken);
 
                 task.Header = request.Task.Header ?? task.Header;
                 task.Description = request.Task.Description ?? task.Description;
                 task.OrderNum = request.Task.OrderNum ?? task.OrderNum;
 
+                if (request.Task.AssignedUsers?.Any() == true)
+                {
+                    var assignedUsers = _context.Users
+                        .Where(t => request.Task.AssignedUsers.Contains(t.Email));
+
+                    await assignedUsers.ForEachAsync(t =>
+                        task.AssignedUsers.Add(new UserTask() { TaskId = task.Id, UserId = t.Id }), cancellationToken);
+                }
+
+                if (request.Task.UnAssignedUsers?.Any() == true)
+                {
+                    var unAssignedUsers = task.AssignedUsers
+                        .Where(t => request.Task.UnAssignedUsers.Contains(t.User.Email))
+                        .ToList();
+
+                    foreach (var unAssignedUser in unAssignedUsers)
+                        task.AssignedUsers.Remove(unAssignedUser);
+                }
+                
                 if (request.Task.ColumnId.TryGetValue(out var columnId) && task.ColumnId != columnId)
                 {
                     var oldColumn = await _context.Columns.SingleAsync(t => t.Id == task.ColumnId, cancellationToken);
