@@ -60,19 +60,14 @@ namespace TasksBoard.Backend.Features.Columns
                 if (column == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Column = Constants.NOT_FOUND });
 
-                if (!string.IsNullOrEmpty(request.Column.Header))
-                    column.Header = request.Column.Header;
+                column.Header = request.Column.Header ?? column.Header;
+                column.Color = request.Column.Color ?? column.Color;
+                column.OrderNum = request.Column.OrderNum ?? column.OrderNum;
 
-                if (!string.IsNullOrEmpty(request.Column.Color))
-                    column.Color = request.Column.Color;
-
-                if (request.Column.OrderNum.TryGetValue(out var orderNum))
-                    column.OrderNum = orderNum;
-
-                if (request.Column.RemovedTasks.Any())
+                if (request.Column.RemovedTasks?.Any() == true)
                     await HandleTasks(request.Column.RemovedTasks, t => column.Tasks.Remove(t), cancellationToken);
 
-                if (request.Column.AddedTasks.Any())
+                if (request.Column.AddedTasks?.Any() == true)
                     await HandleTasks(request.Column.AddedTasks, t => column.Tasks.Add(t), cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);

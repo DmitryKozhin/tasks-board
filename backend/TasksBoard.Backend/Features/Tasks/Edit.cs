@@ -53,7 +53,6 @@ namespace TasksBoard.Backend.Features.Tasks
 
             public async Task<TaskEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                //TODO: add check current user.
                 var task = await _context.Tasks.SingleAsync(t => t.Id == request.TaskId, cancellationToken);
 
                 if (request.Task.AssignedUsers != null)
@@ -69,14 +68,9 @@ namespace TasksBoard.Backend.Features.Tasks
                     await _context.UserTasks.AddRangeAsync(assignedUsers, cancellationToken);
                 }
 
-                if (request.Task.Header != null)
-                    task.Header = request.Task.Header;
-
-                if (request.Task.Description != null)
-                    task.Description = request.Task.Description;
-
-                if (request.Task.OrderNum.TryGetValue(out var orderNum))
-                    task.OrderNum = orderNum;
+                task.Header = request.Task.Header ?? task.Header;
+                task.Description = request.Task.Description ?? task.Description;
+                task.OrderNum = request.Task.OrderNum ?? task.OrderNum;
 
                 if (request.Task.ColumnId.TryGetValue(out var columnId) && task.ColumnId != columnId)
                 {

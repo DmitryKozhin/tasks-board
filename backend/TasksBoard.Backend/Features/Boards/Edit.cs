@@ -56,7 +56,6 @@ namespace TasksBoard.Backend.Features.Boards
 
             public async Task<BoardEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                //TODO: add check current user.
                 var board = await _context.Boards
                     .Include(t => t.Columns)
                     .Include(t => t.UserBoards)
@@ -66,20 +65,19 @@ namespace TasksBoard.Backend.Features.Boards
                 if (board == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Board = Constants.NOT_FOUND });
 
-                if (!string.IsNullOrEmpty(request.Board.Name))
-                    board.Name = request.Board.Name;
+                board.Name = request.Board.Name ?? board.Name;
 
-                if (request.Board.RemovedColumns.Any())
+                if (request.Board.RemovedColumns?.Any() == true)
                     await HandleColumns(request.Board.RemovedColumns, t => board.Columns.Remove(t), cancellationToken);
 
-                if (request.Board.AddedColumns.Any())
+                if (request.Board.AddedColumns?.Any() == true)
                     await HandleColumns(request.Board.AddedColumns, t => board.Columns.Add(t), cancellationToken);
 
-                if (request.Board.AddedUsers.Any())
+                if (request.Board.AddedUsers?.Any() == true)
                     await HandleUsers(request.Board.AddedUsers, 
                         t => board.UserBoards.Add(new UserBoard() { BoardId = request.BoardId, UserId = t.Id }), cancellationToken);
 
-                if (request.Board.RemovedUsers.Any())
+                if (request.Board.RemovedUsers?.Any() == true)
                     await HandleUsers(request.Board.RemovedUsers, 
                         t => board.UserBoards.Remove(new UserBoard() { BoardId = request.BoardId, UserId = t.Id }), cancellationToken);
 

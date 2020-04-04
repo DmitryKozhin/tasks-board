@@ -79,7 +79,7 @@ namespace TasksBoard.Tests
 
         public Task<T> ExecuteDbContextAsync<T>(Func<TasksBoardContext, Task<T>> action)
         {
-            return ExecuteScopeAsync(sp => action(ContextInjector.WriteContext));
+            return ExecuteScopeAsync(sp => action(ContextInjector.ReadContext));
         }
 
         public async Task ExecuteScopeAsync(Func<IServiceProvider, Task> action)
@@ -150,7 +150,8 @@ namespace TasksBoard.Tests
             var user = new User()
             {
                 Email = "email",
-                Name = "username"
+                Name = "username",
+                Biography = "biography"
             };
 
             await ContextInjector.WriteContext.Users.AddAsync(user);

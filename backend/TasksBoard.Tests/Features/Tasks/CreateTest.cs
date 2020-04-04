@@ -40,7 +40,7 @@ namespace TasksBoard.Tests.Features.Tasks
 
             await SendAsync(command);
 
-            var created = await ExecuteDbContextAsync(db => db.Tasks.Where(d => d.Header == command.Task.Header).SingleOrDefaultAsync());
+            var created = await ExecuteDbContextAsync(db => db.Tasks.SingleOrDefaultAsync(d => d.Header == command.Task.Header));
 
             created.Should().NotBeNull();
             created.Header.Should().BeEquivalentTo(command.Task.Header);

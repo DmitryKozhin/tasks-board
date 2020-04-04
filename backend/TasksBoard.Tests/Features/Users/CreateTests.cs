@@ -34,7 +34,7 @@ namespace TasksBoard.Tests.Features.Users
 
             await SendAsync(command);
 
-            var created = await ExecuteDbContextAsync(db => db.Users.Where(d => d.Email == command.User.Email).SingleOrDefaultAsync());
+            var created = await ExecuteDbContextAsync(db => db.Users.SingleOrDefaultAsync(d => d.Email == command.User.Email));
 
             created.Should().NotBeNull();
             created.Email.Should().BeEquivalentTo(command.User.Email);
