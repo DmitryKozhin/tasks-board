@@ -11,6 +11,18 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: admin
+          POSTGRES_DB: TasksBoardTest
+        ports:
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -18,8 +30,20 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore backend
     - name: Build
-      run: dotnet build ../backend --configuration Release --no-restore
+      run: dotnet build backend --configuration Release --no-restore
     - name: Test
-      run: dotnet test ../backend --no-restore --verbosity normal
+      run: dotnet test backend --no-restore --verbosity normal
+      env:
+        Test_TasksBoard_Master_DbHost: "localhost"
+        Test_TasksBoard_Sync_DbHost: "localhost"
+        Test_TasksBoard_Master_DbPort: "5432"
+        Test_TasksBoard_Sync_DbPort: "5432"
+        Test_TasksBoard_Master_DbName: "TasksBoardTest"
+        Test_TasksBoard_Sync_DbName: "TasksBoardTest"
+        Test_TasksBoard_Master_DbUser: "postgres"
+        Test_TasksBoard_Sync_DbUser: "postgres"
+        Test_TasksBoard_Master_DbPass: "admin"
+        Test_TasksBoard_Sync_DbPass: "admin"
+        Test_TasksBoard_LogDirectory: "test_logs"
