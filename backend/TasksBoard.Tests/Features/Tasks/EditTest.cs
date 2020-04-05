@@ -21,7 +21,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Edit_ChageAllProperty_TaskWasUpdatedSuccessfully()
+        public async Task Edit_ChageAllProperty_TaskWasEdited()
         {
             var userId = await CreateUser();
             var columnId = await TaskTestHelper.CreateColumn(
@@ -62,7 +62,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Edit_ChangeSomeProperty_TaskWasUpdatedSuccessfully()
+        public async Task Edit_ChangeSomeProperty_TaskWasEdited()
         {
             var userId = await CreateUser();
             var columnId = await TaskTestHelper.CreateColumn(
@@ -92,7 +92,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Edit_AddAssignedUsers_TaskWasUpdatedSuccessfully()
+        public async Task Edit_AddAssignedUsers_TaskWasEdited()
         {
             var user1Id = await CreateUser("email", "name", "bio");
             var user2Id = await CreateUser("email1", "name1", "bio1");
@@ -128,7 +128,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Edit_RemoveAssignedUsers_TaskWasUpdatedSuccessfullyest()
+        public async Task Edit_RemoveAssignedUsers_TaskWasEdited()
         {
             var user1Id = await CreateUser("email", "name", "bio");
             var user2Id = await CreateUser("email1", "name1", "bio1");

@@ -27,10 +27,8 @@ namespace TasksBoard.Backend.Features.Users
         [HttpGet]
         public async Task<UserEnvelope> GetCurrent()
         {
-            return await _mediator.Send(new Details.Query()
-            {
-                Name = _currentUserAccessor.GetCurrentUserEmail()
-            });
+            var currentUserEmail = _currentUserAccessor.GetCurrentUserEmail();
+            return await _mediator.Send(new Details.Query(currentUserEmail));
         }
 
         [HttpPut]

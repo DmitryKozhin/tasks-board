@@ -53,7 +53,7 @@ namespace TasksBoard.Backend
             var environmentVariableName = variablePrefix + setting;
             var result = Environment.GetEnvironmentVariable(variablePrefix + setting, target);
 
-#if TRACE
+#if DEBUG
             Log.Information(
                 $"Environment variable getting: {environmentVariableName} = '{result}'");
 #endif

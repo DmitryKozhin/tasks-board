@@ -4,7 +4,6 @@ using FluentAssertions;
 
 using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Features.Users;
-using TasksBoard.Backend.Infrastructure.Initializers;
 using TasksBoard.Backend.Infrastructure.Security;
 
 using Xunit;
@@ -21,7 +20,7 @@ namespace TasksBoard.Tests.Features.Users
         }
 
         [Fact]
-        public async Task Login_UserWasLoginSuccessfully()
+        public async Task Login()
         {
             var salt = Guid.NewGuid().ToByteArray();
             var person = new User

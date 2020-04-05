@@ -23,7 +23,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task CreateTask_TaskWasCreatedSuccessfully()
+        public async Task Create_TaskWasCreated()
         {
             var userId = await CreateUser();
             var columnId = await TaskTestHelper.CreateColumn(
@@ -47,6 +47,7 @@ namespace TasksBoard.Tests.Features.Tasks
             created.Header.Should().BeEquivalentTo(command.Task.Header);
             created.ColumnId.Should().Be(command.Task.ColumnId);
             created.Description.Should().BeEquivalentTo(command.Task.Description);
+            created.OrderNum.Should().Be(default);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace TasksBoard.Tests.Features.Users
         }
 
         [Fact]
-        public async Task Create_UserWasCreatedSuccessfully()
+        public async Task Create_UserWasCreated()
         {
             var command = new Create.Command()
             {

@@ -22,14 +22,18 @@ namespace TasksBoard.Backend.Features.Users
     {
         public class Query : IRequest<UserEnvelope>
         {
-            public string Name { get; set; }
+            public Query(string email)
+            {
+                Email = email;
+            }
+            public string Email { get; }
         }
 
         public class QueryValidator : AbstractValidator<Query>
         {
             public QueryValidator()
             {
-                RuleFor(x => x.Name).NotNull().NotEmpty();
+                RuleFor(x => x.Email).NotNull().NotEmpty();
             }
         }
 
@@ -50,7 +54,7 @@ namespace TasksBoard.Backend.Features.Users
             {
                 var user = await _context.Users
                     .AsNoTracking()
-                    .FirstOrDefaultAsync(x => x.Name == message.Name, cancellationToken);
+                    .FirstOrDefaultAsync(x => x.Email == message.Email, cancellationToken);
 
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, new { User = Constants.NOT_FOUND });
