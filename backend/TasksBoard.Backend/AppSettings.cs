@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 
 using Serilog;
 
+using TasksBoard.Backend.Infrastructure.Errors;
+
 namespace TasksBoard.Backend
 {
     public class AppSettings
