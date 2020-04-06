@@ -1,11 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+
+using Serilog;
+
+using TasksBoard.Backend.Infrastructure.Initializers;
 
 namespace TasksBoard.Backend
 {
@@ -13,14 +11,21 @@ namespace TasksBoard.Backend
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            LoggerInitiator.Init();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+            var config = new ConfigurationBuilder()
+                .AddEnvironmentVariables()
+                .Build();
+
+            var host = new WebHostBuilder()
+                .UseConfiguration(config)
+                .UseKestrel()
+                .UseUrls($"http://+:5000")
+                .UseStartup<Startup>()
+                .UseSerilog()
+                .Build();
+
+            host.Run();
+        }
     }
 }
