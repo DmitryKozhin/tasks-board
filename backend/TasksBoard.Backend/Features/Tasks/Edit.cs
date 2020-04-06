@@ -11,10 +11,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 using TasksBoard.Backend.Domain;
-using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
-
-using Task = System.Threading.Tasks.Task;
+using TasksBoard.Backend.Infrastructure.Extensions;
 
 namespace TasksBoard.Backend.Features.Tasks
 {

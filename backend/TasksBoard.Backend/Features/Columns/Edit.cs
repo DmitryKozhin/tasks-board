@@ -11,7 +11,6 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 
-using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
 using TasksBoard.Backend.Infrastructure.Errors;
 

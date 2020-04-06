@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -14,6 +15,7 @@ using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
 using TasksBoard.Backend.Infrastructure.Errors;
+using TasksBoard.Backend.Infrastructure.Extensions;
 
 namespace TasksBoard.Backend.Features.Columns
 {
@@ -68,7 +70,7 @@ namespace TasksBoard.Backend.Features.Columns
                 if (owner == null)
                     throw new RestException(HttpStatusCode.BadRequest, new { User = Constants.NOT_FOUND });
 
-                var board = await _context.Boards.FirstOrDefaultAsync(t => t.Id == request.Column.BoardId,
+                var board = await _context.Boards.SingleOrDefaultAsync(t => t.Id == request.Column.BoardId,
                     cancellationToken);
 
                 if (board == null)
@@ -78,9 +80,9 @@ namespace TasksBoard.Backend.Features.Columns
                 {
                     BoardId = request.Column.BoardId, 
                     Color = request.Column.Color, 
-                    Header = request.Column.Color,
+                    Header = request.Column.Header,
                     OwnerId = owner.Id,
-                    OrderNum = board.Columns.Max(t => t.OrderNum) + 1
+                    OrderNum = board.Columns.GetNextOrderNum(),
                 };
 
                 await _context.Columns.AddAsync(column, cancellationToken);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
+using TasksBoard.Backend.Infrastructure.Errors;
+using TasksBoard.Backend.Infrastructure.Extensions;
 
 using Task = TasksBoard.Backend.Domain.Task;
 
@@ -62,14 +65,20 @@ namespace TasksBoard.Backend.Features.Tasks
 
             public async Task<TaskEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_userAccessor.GetCurrentUserEmail()), cancellationToken);
-                var column = await _context.Columns.SingleAsync(t => t.Id == request.Task.ColumnId, cancellationToken);
+                var owner = await _context.Users.SingleOrDefaultAsync(t => t.Email.Equals(_userAccessor.GetCurrentUserEmail()), cancellationToken);
+                if (owner == null)
+                    throw new RestException(HttpStatusCode.BadRequest, new { User = Constants.NOT_FOUND });
+
+                var column = await _context.Columns.SingleOrDefaultAsync(t => t.Id == request.Task.ColumnId, cancellationToken);
+                if (column == null)
+                    throw new RestException(HttpStatusCode.BadRequest, new { Column = Constants.NOT_FOUND });
+
                 var task = new Task()
                 {
                     ColumnId = column.Id,
                     Header = request.Task.Header,
                     Description = request.Task.Description,
-                    OrderNum = GetNewOrderNumber(column.Tasks),
+                    OrderNum = column.Tasks.GetNextOrderNum(),
                     OwnerId = owner.Id,
                 };
 
@@ -77,14 +86,6 @@ namespace TasksBoard.Backend.Features.Tasks
                 await _context.UserTasks.AddAsync(new UserTask() { TaskId = task.Id, UserId = owner.Id }, cancellationToken);
                 await _context.SaveChangesAsync(cancellationToken);
                 return new TaskEnvelope(task);
-            }
-
-            private static int GetNewOrderNumber(ICollection<Task> tasks)
-            {
-                if (tasks.Any())
-                    return tasks.Max(t => t.OrderNum) + 1;
-
-                return default;
             }
         }
     }

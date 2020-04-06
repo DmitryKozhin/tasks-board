@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace TasksBoard.Backend.Domain
 {
-    public class Task
+    public class Task : IOrderableEntity
     {
         public Task()
         {

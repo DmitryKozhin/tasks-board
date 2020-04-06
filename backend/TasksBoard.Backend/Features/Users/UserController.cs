@@ -4,7 +4,6 @@ using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.Differencing;
 
 using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Security;

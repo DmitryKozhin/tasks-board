@@ -6,7 +6,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Infrastructure.Security;
 
 using Task = System.Threading.Tasks.Task;
