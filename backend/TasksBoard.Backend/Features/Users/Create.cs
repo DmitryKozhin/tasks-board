@@ -70,7 +70,7 @@ namespace TasksBoard.Backend.Features.Users
 
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
-                if (await _context.Users.Where(x => x.Email == message.User.Email).AnyAsync(cancellationToken))
+                if (await _context.Users.AnyAsync(x => x.Email.Equals(message.User.Email), cancellationToken))
                     throw new RestException(HttpStatusCode.BadRequest, new { Email = Constants.IN_USE });
 
                 var salt = Guid.NewGuid().ToByteArray();

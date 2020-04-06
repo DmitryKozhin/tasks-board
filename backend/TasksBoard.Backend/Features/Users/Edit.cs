@@ -66,7 +66,7 @@ namespace TasksBoard.Backend.Features.Users
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
                 var currentUserEmail = _currentUserAccessor.GetCurrentUserEmail();
-                var user = await _context.Users.Where(x => x.Email == currentUserEmail).SingleOrDefaultAsync(cancellationToken);
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == currentUserEmail, cancellationToken);
 
                 if (user == null)
                     throw new RestException(HttpStatusCode.NotFound, new { User = Constants.NOT_FOUND });

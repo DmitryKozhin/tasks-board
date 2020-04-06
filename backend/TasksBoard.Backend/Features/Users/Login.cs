@@ -66,7 +66,7 @@ namespace TasksBoard.Backend.Features.Users
 
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
-                var user = await _context.Users.Where(x => x.Email == message.User.Email).SingleOrDefaultAsync(cancellationToken);
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == message.User.Email, cancellationToken);
                 if (user == null)
                     throw new RestException(HttpStatusCode.Unauthorized, new { Error = "Invalid email / password." });
 
