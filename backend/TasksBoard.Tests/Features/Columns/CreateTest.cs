@@ -20,7 +20,7 @@ namespace TasksBoard.Tests.Features.Columns
         }
 
         [Fact]
-        public async Task Create_ColumnWasCreated()
+        public async Task Create_ColumnCreated()
         {
             var userId = await CreateUser();
             var boardId = await ColumnTestHelper.CreateBoard(ContextInjector.WriteContext, userId);

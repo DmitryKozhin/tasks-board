@@ -74,12 +74,23 @@ namespace TasksBoard.Backend.Features.Boards
                     await HandleColumns(request.Board.AddedColumns, board.Columns.Add, cancellationToken);
 
                 if (request.Board.AddedUsers?.Any() == true)
-                    await HandleUsers(request.Board.AddedUsers, 
-                        board.UserBoards.Add, cancellationToken);
+                {
+                    var addedUsers = _context.Users
+                        .Where(t => request.Board.AddedUsers.Contains(t.Email));
+
+                    await addedUsers.ForEachAsync(t =>
+                        board.UserBoards.Add(new UserBoard() { BoardId = board.Id, UserId = t.Id }), cancellationToken);
+                }
 
                 if (request.Board.RemovedUsers?.Any() == true)
-                    await HandleUsers(request.Board.RemovedUsers, 
-                        t => board.UserBoards.Remove(t), cancellationToken);
+                {
+                    var removedUsers = board.UserBoards
+                        .Where(t => request.Board.RemovedUsers.Contains(t.User.Email))
+                        .ToList();
+
+                    foreach (var removedUser in removedUsers)
+                        board.UserBoards.Remove(removedUser);
+                }
 
                 await _context.SaveChangesAsync(cancellationToken);
                 return new BoardEnvelope(board);
@@ -89,12 +100,6 @@ namespace TasksBoard.Backend.Features.Boards
             {
                 var columns = _context.Columns.Where(t => columnIds.Contains(t.Id));
                 await columns.ForEachAsync(handle, cancellationToken);
-            }
-
-            private async Task HandleUsers(List<string> userEmails, Action<UserBoard> handle, CancellationToken cancellationToken)
-            {
-                var users = _context.UserBoards.Include(t => t.User).Where(t => userEmails.Contains(t.User.Email));
-                await users.ForEachAsync(handle, cancellationToken);
             }
         }
     }

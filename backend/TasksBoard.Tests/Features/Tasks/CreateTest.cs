@@ -24,7 +24,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Create_TaskWasCreated()
+        public async Task Create_TaskCreated()
         {
             var userId = await CreateUser();
             var columnId = await TaskTestHelper.CreateColumn(

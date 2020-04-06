@@ -24,7 +24,7 @@ namespace TasksBoard.Tests.Features.Columns
         }
 
         [Fact]
-        public async Task Edit_ChangeAllProperties_ColumnWasEdited()
+        public async Task Edit_ChangeAllProperties_ColumnEdited()
         {
             var userId = await CreateUser();
             var boardId = await ColumnTestHelper.CreateBoard(ContextInjector.WriteContext, userId);

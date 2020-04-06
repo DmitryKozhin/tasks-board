@@ -57,10 +57,15 @@ namespace TasksBoard.Backend.Features.Boards
 
             public async Task<BoardEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
-                if (await _context.Boards.Where(x => x.Name == request.Board.Name).AnyAsync(cancellationToken))
+                if (await _context.Boards.AnyAsync(x => x.Name == request.Board.Name, cancellationToken))
                     throw new RestException(HttpStatusCode.BadRequest, new { Name = Constants.IN_USE });
 
-                var owner = await _context.Users.SingleAsync(t => t.Email.Equals(_currentUserAccessor.GetCurrentUserEmail()), cancellationToken);
+                var owner = await _context.Users.SingleOrDefaultAsync(t => 
+                    t.Email.Equals(_currentUserAccessor.GetCurrentUserEmail()), cancellationToken);
+
+                if (owner == null)
+                    throw new RestException(HttpStatusCode.NotFound, new { User = Constants.NOT_FOUND });
+
                 var board = new Board(){ Name = request.Board.Name, OwnerId = owner.Id };
                 await _context.Boards.AddAsync(board, cancellationToken);
                 await _context.UserBoards.AddAsync(new UserBoard() { BoardId = board.Id, UserId = owner.Id },

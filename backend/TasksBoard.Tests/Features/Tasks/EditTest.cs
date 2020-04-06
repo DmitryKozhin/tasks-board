@@ -21,7 +21,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Edit_ChageAllProperties_TaskWasEdited()
+        public async Task Edit_ChageAllProperties_TaskEdited()
         {
             var userId = await CreateUser();
             var columnId = await TaskTestHelper.CreateColumn(
