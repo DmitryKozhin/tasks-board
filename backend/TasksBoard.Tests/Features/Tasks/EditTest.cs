@@ -21,7 +21,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Edit_ChageAllProperty_TaskWasEdited()
+        public async Task Edit_ChageAllProperties_TaskWasEdited()
         {
             var userId = await CreateUser();
             var columnId = await TaskTestHelper.CreateColumn(
@@ -62,37 +62,7 @@ namespace TasksBoard.Tests.Features.Tasks
         }
 
         [Fact]
-        public async Task Edit_ChangeSomeProperty_TaskWasEdited()
-        {
-            var userId = await CreateUser();
-            var columnId = await TaskTestHelper.CreateColumn(
-                ContextInjector.WriteContext, userId, "test_board", "test_column");
-
-            var taskDesc = "test_desc";
-            var existingTaskId =
-                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, columnId, "test", taskDesc);
-
-            var command = new Edit.Command()
-            {
-                TaskId = existingTaskId,
-                Task = new Edit.TaskData()
-                {
-                    Header = "test1"
-                }
-            };
-
-            await SendAsync(command);
-
-            var updated = await ExecuteDbContextAsync(db => db.Tasks.SingleOrDefaultAsync(d => d.Id == command.TaskId));
-
-            updated.Should().NotBeNull();
-            updated.Header.Should().BeEquivalentTo(command.Task.Header);
-            updated.Description.Should().BeEquivalentTo(taskDesc);
-            updated.ColumnId.Should().Be(columnId);
-        }
-
-        [Fact]
-        public async Task Edit_AddAssignedUsers_TaskWasEdited()
+        public async Task Edit_AddAssignedUsers_UsersAdded()
         {
             var user1Id = await CreateUser("email", "name", "bio");
             var user2Id = await CreateUser("email1", "name1", "bio1");
@@ -122,13 +92,13 @@ namespace TasksBoard.Tests.Features.Tasks
 
             updated.Should().NotBeNull();
             updated.AssignedUsers.Should().HaveCount(3);
-            updated.AssignedUsers.Select(t => t.UserId).Should().Contain(user1Id);
-            updated.AssignedUsers.Select(t => t.UserId).Should().Contain(user2Id);
-            updated.AssignedUsers.Select(t => t.UserId).Should().Contain(user3Id);
+            var assignedUserIds = updated.AssignedUsers.Select(t => t.UserId).ToList();
+            foreach (var userId in new []{user1Id, user2Id, user3Id})
+                assignedUserIds.Should().Contain(userId);
         }
 
         [Fact]
-        public async Task Edit_RemoveAssignedUsers_TaskWasEdited()
+        public async Task Edit_RemoveAssignedUsers_UsersRemoved()
         {
             var user1Id = await CreateUser("email", "name", "bio");
             var user2Id = await CreateUser("email1", "name1", "bio1");
@@ -161,9 +131,9 @@ namespace TasksBoard.Tests.Features.Tasks
 
             updated.Should().NotBeNull();
             updated.AssignedUsers.Should().HaveCount(2);
-            updated.AssignedUsers.Select(t => t.UserId).Should().Contain(user1Id);
-            updated.AssignedUsers.Select(t => t.UserId).Should().NotContain(user2Id);
-            updated.AssignedUsers.Select(t => t.UserId).Should().Contain(user3Id);
+            var assignedUserIds = updated.AssignedUsers.Select(t => t.UserId).ToList();
+            foreach (var userId in new[] { user1Id, user3Id })
+                assignedUserIds.Should().Contain(userId);
         }
     }
 }
