@@ -54,7 +54,7 @@ namespace TasksBoard.Backend.Features.Columns
             public async Task<ColumnEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
                 var column =
-                    await _context.Columns.FirstOrDefaultAsync(t => t.Id == request.ColumnId, cancellationToken);
+                    await _context.Columns.SingleOrDefaultAsync(t => t.Id == request.ColumnId, cancellationToken);
 
                 if (column == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Column = Constants.NOT_FOUND });

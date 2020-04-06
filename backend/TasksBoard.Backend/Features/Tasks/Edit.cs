@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Infrastructure.Context;
+using TasksBoard.Backend.Infrastructure.Errors;
 using TasksBoard.Backend.Infrastructure.Extensions;
 
 namespace TasksBoard.Backend.Features.Tasks
@@ -57,7 +59,10 @@ namespace TasksBoard.Backend.Features.Tasks
                 var task = await _context.Tasks
                     .Include(t => t.AssignedUsers)
                     .ThenInclude(t => t.User)
-                    .SingleAsync(t => t.Id == request.TaskId, cancellationToken);
+                    .SingleOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken);
+
+                if (task == null)
+                    throw new RestException(HttpStatusCode.NotFound, new { Task = Constants.NOT_FOUND });
 
                 task.Header = request.Task.Header ?? task.Header;
                 task.Description = request.Task.Description ?? task.Description;

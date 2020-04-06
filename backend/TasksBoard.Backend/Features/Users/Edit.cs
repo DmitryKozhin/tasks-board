@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using TasksBoard.Backend.Domain;
 using TasksBoard.Backend.Infrastructure;
 using TasksBoard.Backend.Infrastructure.Context;
+using TasksBoard.Backend.Infrastructure.Errors;
 using TasksBoard.Backend.Infrastructure.Security;
 
 namespace TasksBoard.Backend.Features.Users
@@ -64,7 +66,10 @@ namespace TasksBoard.Backend.Features.Users
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
                 var currentUserEmail = _currentUserAccessor.GetCurrentUserEmail();
-                var user = await _context.Users.Where(x => x.Email == currentUserEmail).FirstOrDefaultAsync(cancellationToken);
+                var user = await _context.Users.Where(x => x.Email == currentUserEmail).SingleOrDefaultAsync(cancellationToken);
+
+                if (user == null)
+                    throw new RestException(HttpStatusCode.NotFound, new { User = Constants.NOT_FOUND });
 
                 user.Name = message.User.Name ?? user.Name;
                 user.Email = message.User.Email ?? user.Email;
