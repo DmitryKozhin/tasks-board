@@ -10,25 +10,24 @@ import Register from '../components/Register';
 import { store } from '../store';
 import { push } from 'react-router-redux';
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
     appLoaded: state.common.appLoaded,
     appName: state.common.appName,
     currentUser: state.common.currentUser,
-    redirectTo: state.common.redirectTo
-  }};
+    redirectTo: state.common.redirectTo,
+  };
+};
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   onLoad: (payload, token) =>
     dispatch({ type: APP_LOAD, payload, token, skipTracking: true }),
-  onRedirect: () =>
-    dispatch({ type: REDIRECT })
+  onRedirect: () => dispatch({ type: REDIRECT }),
 });
 
 class App extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.redirectTo) {
-      // this.context.router.replace(nextProps.redirectTo);
       store.dispatch(push(nextProps.redirectTo));
       this.props.onRedirect();
     }
@@ -49,12 +48,13 @@ class App extends React.Component {
         <div>
           <Header
             appName={this.props.appName}
-            currentUser={this.props.currentUser} />
-            <Switch>
-            <Route exact path="/" component={Home}/>
+            currentUser={this.props.currentUser}
+          />
+          <Switch>
+            <Route exact path="/" component={Home} />
             <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
-            </Switch>
+          </Switch>
         </div>
       );
     }
@@ -62,14 +62,11 @@ class App extends React.Component {
       <div>
         <Header
           appName={this.props.appName}
-          currentUser={this.props.currentUser} />
+          currentUser={this.props.currentUser}
+        />
       </div>
     );
   }
 }
-
-// App.contextTypes = {
-//   router: PropTypes.object.isRequired
-// };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -14,13 +14,13 @@ import {
   PROFILE_FAVORITES_PAGE_UNLOADED,
   SETTINGS_PAGE_UNLOADED,
   LOGIN_PAGE_UNLOADED,
-  REGISTER_PAGE_UNLOADED
+  REGISTER_PAGE_UNLOADED,
 } from '../constants/actionTypes';
 
 const defaultState = {
   appName: 'Tasks Board',
   token: null,
-  viewChangeCounter: 0
+  viewChangeCounter: 0,
 };
 
 export default (state = defaultState, action) => {
@@ -30,7 +30,7 @@ export default (state = defaultState, action) => {
         ...state,
         token: action.token || null,
         appLoaded: true,
-        currentUser: action.payload ? action.payload.user : null
+        currentUser: action.payload ? action.payload.user : null,
       };
     case REDIRECT:
       return { ...state, redirectTo: null };
@@ -42,7 +42,7 @@ export default (state = defaultState, action) => {
         ...state,
         redirectTo: action.error ? null : '/',
         token: action.error ? null : action.payload.user.token,
-        currentUser: action.error ? null : action.payload.user
+        currentUser: action.error ? null : action.payload.user,
       };
     case HOME_PAGE_UNLOADED:
     case LOGIN_PAGE_UNLOADED:

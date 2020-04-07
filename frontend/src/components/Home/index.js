@@ -10,22 +10,21 @@ import {
 
 const Promise = global.Promise;
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   ...state.home,
   appName: state.common.appName,
-  token: state.common.token
+  token: state.common.token,
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   onLoad: (tab, pager, payload) =>
     dispatch({ type: HOME_PAGE_LOADED, tab, pager, payload }),
-  onUnload: () =>
-    dispatch({  type: HOME_PAGE_UNLOADED })
+  onUnload: () => dispatch({ type: HOME_PAGE_UNLOADED }),
 });
 
 class Home extends React.Component {
   componentWillMount() {
-    const tab = 'register';
+    this.props.onLoad();
   }
 
   componentWillUnmount() {
@@ -35,7 +34,6 @@ class Home extends React.Component {
   render() {
     return (
       <div className="home-page">
-
         <Banner token={this.props.token} appName={this.props.appName} />
 
         <div className="container page">
@@ -43,7 +41,6 @@ class Home extends React.Component {
             <MainView />
           </div>
         </div>
-
       </div>
     );
   }
