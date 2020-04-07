@@ -10,7 +10,6 @@ const Banner = ({ appName, token }) => {
         <h1 className="logo-font">
           {appName}
         </h1>
-        <p>A place to share your knowledge.</p>
       </div>
     </div>
   );

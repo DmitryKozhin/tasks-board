@@ -16,6 +16,7 @@ const mapDispatchToProps = dispatch => ({
 const MainView = props => {
   return (
     <div className="col-md-9">
+      <p>test</p>
     </div>
   );
 };

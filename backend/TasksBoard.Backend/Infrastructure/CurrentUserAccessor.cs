@@ -16,7 +16,7 @@ namespace TasksBoard.Backend.Infrastructure
 
         public string GetCurrentUserEmail()
         {
-            return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            return _httpContextAccessor.HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
         }
     }
 }
