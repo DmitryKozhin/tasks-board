@@ -47,5 +47,11 @@ namespace TasksBoard.Backend.Features.Boards
         {
             return await _mediator.Send(new Details.Query(id));
         }
+
+        [HttpGet]
+        public async Task<BoardsEnvelope> Get([FromQuery] string name)
+        {
+            return await _mediator.Send(new List.Query(name));
+        }
     }
 }
