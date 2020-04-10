@@ -45,7 +45,7 @@ class App extends React.Component {
   render() {
     if (this.props.appLoaded) {
       return (
-        <div>
+        <div className="container">
           <Header
             appName={this.props.appName}
             currentUser={this.props.currentUser}

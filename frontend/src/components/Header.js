@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const LoggedOutView = (props) => {
   if (!props.currentUser) {
     return (
-      <ul className="nav navbar-nav pull-xs-right">
+      <ul className="nav">
         <li className="nav-item">
           <Link to="/login" className="nav-link">
             Sign in
@@ -25,7 +25,7 @@ const LoggedOutView = (props) => {
 const LoggedInView = (props) => {
   if (props.currentUser) {
     return (
-      <ul className="nav navbar-nav pull-xs-right">
+      <ul className="nav">
         <li className="nav-item">
           <Link to="/" className="nav-link">
             Boards
@@ -50,7 +50,7 @@ class Header extends React.Component {
       <nav className="navbar navbar-light">
         <div className="container">
           <Link to="/" className="navbar-brand">
-            {this.props.appName.toLowerCase()}
+            {this.props.appName}
           </Link>
 
           <LoggedInView currentUser={this.props.currentUser} />

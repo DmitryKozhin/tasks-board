@@ -2,19 +2,12 @@ import {
   APP_LOAD,
   REDIRECT,
   LOGOUT,
-  ARTICLE_SUBMITTED,
-  SETTINGS_SAVED,
   LOGIN,
   REGISTER,
-  DELETE_ARTICLE,
-  ARTICLE_PAGE_UNLOADED,
-  EDITOR_PAGE_UNLOADED,
   HOME_PAGE_UNLOADED,
-  PROFILE_PAGE_UNLOADED,
-  PROFILE_FAVORITES_PAGE_UNLOADED,
-  SETTINGS_PAGE_UNLOADED,
   LOGIN_PAGE_UNLOADED,
   REGISTER_PAGE_UNLOADED,
+  MAIN_VIEW_LOAD,
 } from '../constants/actionTypes';
 
 const defaultState = {
@@ -48,6 +41,7 @@ export default (state = defaultState, action) => {
     case LOGIN_PAGE_UNLOADED:
     case REGISTER_PAGE_UNLOADED:
       return { ...state, viewChangeCounter: state.viewChangeCounter + 1 };
+    case MAIN_VIEW_LOAD:
     default:
       return state;
   }

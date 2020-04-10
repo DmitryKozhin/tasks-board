@@ -1,7 +1,7 @@
-import Banner from './Banner';
 import MainView from './MainView';
 import React from 'react';
 import agent from '../../agent';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   HOME_PAGE_LOADED,
@@ -14,6 +14,7 @@ const mapStateToProps = (state) => ({
   ...state.home,
   appName: state.common.appName,
   token: state.common.token,
+  currentUser: state.common.currentUser,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -34,11 +35,9 @@ class Home extends React.Component {
   render() {
     return (
       <div className="home-page">
-        <Banner token={this.props.token} appName={this.props.appName} />
-
         <div className="container page">
           <div className="row">
-            <MainView />
+            {this.props.currentUser ? <MainView /> : <Redirect to="/login" />}
           </div>
         </div>
       </div>
