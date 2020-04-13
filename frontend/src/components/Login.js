@@ -1,42 +1,33 @@
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import React, { useEffect, useState, useCallback } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
-import {
-  UPDATE_FIELD_AUTH,
-  LOGIN,
-  LOGIN_PAGE_UNLOADED,
-} from '../constants/actionTypes';
+import { LOGIN, LOGIN_PAGE_UNLOADED } from '../constants/actionTypes';
 
 const mapStateToProps = (state) => ({ ...state.auth });
 
 const mapDispatchToProps = (dispatch) => ({
-  onChangeEmail: (value) =>
-    dispatch({ type: UPDATE_FIELD_AUTH, key: 'email', value }),
-  onChangePassword: (value) =>
-    dispatch({ type: UPDATE_FIELD_AUTH, key: 'password', value }),
   onSubmit: (email, password) =>
     dispatch({ type: LOGIN, payload: agent.Auth.login(email, password) }),
   onUnload: () => dispatch({ type: LOGIN_PAGE_UNLOADED }),
 });
 
 const Login = (props) => {
-  useEffect(() => {
-    props.onUnload();
-  }, []);
+  let [email, setEmail] = useState('');
+  let [password, setPassword] = useState('');
 
-  const changeEmail = useCallback((ev) => {
-    props.onChangeEmail(ev.target.value);
-  }, []);
-  const changePassword = useCallback((ev) => {
-    props.onChangePassword(ev.target.value);
-  }, []);
+  useEffect(() => {
+    return () => {
+      props.onUnload();
+    };
+  }, [props]);
+
   const submitForm = useCallback(
     (ev) => {
       ev.preventDefault();
-      props.onSubmit(props.email, props.password);
+      props.onSubmit(email, password);
     },
-    [props]
+    [props, email, password]
   );
 
   return (
@@ -56,8 +47,8 @@ const Login = (props) => {
                     className="form-control form-control-lg"
                     type="email"
                     placeholder="Email"
-                    value={props.email}
-                    onChange={changeEmail}
+                    value={email}
+                    onChange={(ev) => setEmail(ev.target.value)}
                   />
                 </fieldset>
 
@@ -66,8 +57,8 @@ const Login = (props) => {
                     className="form-control form-control-lg"
                     type="password"
                     placeholder="Password"
-                    value={props.password}
-                    onChange={changePassword}
+                    value={password}
+                    onChange={(ev) => setPassword(ev.target.value)}
                   />
                 </fieldset>
 

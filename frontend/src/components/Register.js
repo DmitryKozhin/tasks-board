@@ -1,22 +1,12 @@
 import { Link } from 'react-router-dom';
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
-import {
-  UPDATE_FIELD_AUTH,
-  REGISTER,
-  REGISTER_PAGE_UNLOADED,
-} from '../constants/actionTypes';
+import { REGISTER, REGISTER_PAGE_UNLOADED } from '../constants/actionTypes';
 
-const mapStateToProps = (state) => ({ ...state.auth });
+const mapStateToProps = (state) => ({ inProgress: state.auth.inProgress });
 
 const mapDispatchToProps = (dispatch) => ({
-  onChangeEmail: (value) =>
-    dispatch({ type: UPDATE_FIELD_AUTH, key: 'email', value }),
-  onChangePassword: (value) =>
-    dispatch({ type: UPDATE_FIELD_AUTH, key: 'password', value }),
-  onChangeUsername: (value) =>
-    dispatch({ type: UPDATE_FIELD_AUTH, key: 'username', value }),
   onSubmit: (username, email, password) => {
     const payload = agent.Auth.register(username, email, password);
     dispatch({ type: REGISTER, payload });
@@ -25,18 +15,24 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const Register = (props) => {
+  let [username, setUsername] = useState('');
+  let [email, setEmail] = useState('');
+  let [password, setPassword] = useState('');
+
   useEffect(() => {
-    props.onUnload();
-  }, []);
+    return () => {
+      props.onUnload();
+    };
+  }, [props]);
 
   const changeEmail = useCallback((ev) => {
-    props.onChangeEmail(ev.target.value);
+    setEmail(ev.target.value);
   }, []);
   const changePassword = useCallback((ev) => {
-    props.onChangePassword(ev.target.value);
+    setPassword(ev.target.value);
   }, []);
   const changeUsername = useCallback((ev) => {
-    props.onChangeUsername(ev.target.value);
+    setUsername(ev.target.value);
   }, []);
   const submitForm = useCallback(
     (ev) => {
@@ -63,7 +59,7 @@ const Register = (props) => {
                     className="form-control form-control-lg"
                     type="text"
                     placeholder="Username"
-                    value={props.username}
+                    value={username}
                     onChange={changeUsername}
                   />
                 </fieldset>
@@ -73,7 +69,7 @@ const Register = (props) => {
                     className="form-control form-control-lg"
                     type="email"
                     placeholder="Email"
-                    value={props.email}
+                    value={email}
                     onChange={changeEmail}
                   />
                 </fieldset>
@@ -83,7 +79,7 @@ const Register = (props) => {
                     className="form-control form-control-lg"
                     type="password"
                     placeholder="Password"
-                    value={props.password}
+                    value={password}
                     onChange={changePassword}
                   />
                 </fieldset>

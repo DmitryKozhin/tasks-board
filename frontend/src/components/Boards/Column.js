@@ -8,7 +8,7 @@ const mapDispatchToProps = (dispatch) => ({});
 
 const Column = (props) => {
   return (
-    <Card className="column">
+    <Card className="column" style={{ borderColor: '' }}>
       <Card.Header as="h5">{props.column.header}</Card.Header>
       <Card.Body>
         <Card.Title>Special title treatment</Card.Title>

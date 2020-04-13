@@ -1,12 +1,12 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import agent from '../../agent';
 import { connect } from 'react-redux';
 import {
   CHANGE_TAB,
-  HIDE_ADD_BOARD,
   SHOW_ADD_BOARD,
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
+  CREATE_BOARD,
 } from '../../constants/actionTypes';
 import AddBoardModal from '../Boards/AddBoardModal';
 import { Form, Button } from 'react-bootstrap';
@@ -23,31 +23,40 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   onTabClick: (tab, pager, payload) =>
     dispatch({ type: CHANGE_TAB, tab, pager, payload }),
-  onShowModal: () => dispatch({ type: SHOW_ADD_BOARD }),
-  onCloseModal: () => dispatch({ type: HIDE_ADD_BOARD }),
   onLoad: (payload) => dispatch({ type: MAIN_VIEW_LOAD, payload }),
   onSelectBoard: (id) => {
     const payload = agent.Board.get(id);
     return dispatch({ type: SELECT_BOARD, payload });
+  },
+  onCreateBord: (name) => {
+    if (!name) {
+      return;
+    }
+    let payload = agent.Board.create(name);
+    dispatch({ type: CREATE_BOARD, payload });
   },
 });
 
 const MainView = (props) => {
   useEffect(() => {
     props.onLoad(agent.Board.all());
+  }, []);
 
-    return () => {
-      if (!props.selectedBoard && props.boards) {
-        props.onSelectBoard(props.boards[0].id);
-      }
-    };
-  });
+  const [isShowing, setShow] = useState(false);
+  const showModal = () => setShow(true);
+  const closeModal = () => setShow(false);
+  const createBoard = (name) => {
+    props.onCreateBord(name);
+    setShow(false);
+  };
 
-  const showModal = () => props.onShowModal();
-  const closeModal = () => props.onCloseModal();
   const selectBoard = (ev) => {
     props.onSelectBoard(ev.target.value);
   };
+
+  if (!props.selectedBoard && props.boards) {
+    props.onSelectBoard(props.boards[0].id);
+  }
 
   return (
     <div className="home">
@@ -59,29 +68,26 @@ const MainView = (props) => {
                 as="select"
                 size="sm"
                 custom
-                value={props.selectedBoard?.id}
                 onChange={selectBoard}
+                value={props.selectedBoard?.id}
+                defaultValue={'default'}
               >
+                <option value="default" disabled>
+                  Choose a board ...
+                </option>
                 {props.boards ? (
                   props.boards.map((board) => {
-                    return props.selectedBoard &&
-                      props.selectedBoard.id === board.id ? (
-                      <option value={board.id} selected>
+                    return (
+                      <option key={board.id} value={board.id}>
                         {board.name}
                       </option>
-                    ) : (
-                      <option value={board.id}>{board.name}</option>
                     );
                   })
                 ) : (
                   <option>none</option>
                 )}
               </Form.Control>
-              <Button
-                size="sm"
-                className="home__add-board"
-                onClick={props.onShowModal}
-              >
+              <Button size="sm" className="home__add-board" onClick={showModal}>
                 Add
               </Button>
             </div>
@@ -97,11 +103,11 @@ const MainView = (props) => {
         ''
       )}
 
-      {props.isShowing ? (
-        <AddBoardModal onShowModal={showModal} onHide={closeModal} />
-      ) : (
-        ''
-      )}
+      <AddBoardModal
+        isShowing={isShowing}
+        onHide={closeModal}
+        onCreate={createBoard}
+      />
     </div>
   );
 };

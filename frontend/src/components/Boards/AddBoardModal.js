@@ -1,35 +1,19 @@
-import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import {
-  HIDE_ADD_BOARD,
-  SHOW_ADD_BOARD,
-  CREATE_BOARD,
-  UPDATE_ADD_BOARD_NAME,
-} from '../../constants/actionTypes';
-import agent from '../../agent';
-
-const mapStateToProps = (state) => ({ ...state.boards });
-
-const mapDispatchToProps = (dispatch) => ({
-  onCreateBord: (name) => {
-    if (!name) {
-      return;
-    }
-    let payload = agent.Board.create(name);
-    dispatch({ type: CREATE_BOARD, payload });
-  },
-  onUpdateName: (name) => dispatch({ type: UPDATE_ADD_BOARD_NAME, name }),
-});
 
 const AddBoardModal = (props) => {
-  const changeName = (ev) => props.onUpdateName(ev.target.value);
+  const [name, setName] = useState('');
+  // use callback после того, как поменять на FC
+  // + bind action creators
+  const changeName = useCallback((ev) => {
+    setName(ev.target.value);
+  });
   const saveAndCloseModal = useCallback(() => {
-    props.onCreateBord(props.name);
-  }, [props]);
+    props.onCreate(name);
+  }, [props, name]);
 
   return (
-    <Modal show={props.onShowModal} onHide={props.onHide}>
+    <Modal show={props.isShowing} onHide={props.onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add board</Modal.Title>
       </Modal.Header>
@@ -60,4 +44,4 @@ const AddBoardModal = (props) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddBoardModal);
+export default AddBoardModal;

@@ -1,14 +1,11 @@
 import MainView from './MainView';
-import React from 'react';
-import agent from '../../agent';
+import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   HOME_PAGE_LOADED,
   HOME_PAGE_UNLOADED,
 } from '../../constants/actionTypes';
-
-const Promise = global.Promise;
 
 const mapStateToProps = (state) => ({
   ...state.home,
@@ -23,26 +20,24 @@ const mapDispatchToProps = (dispatch) => ({
   onUnload: () => dispatch({ type: HOME_PAGE_UNLOADED }),
 });
 
-class Home extends React.Component {
-  componentWillMount() {
-    this.props.onLoad();
-  }
+const Home = (props) => {
+  useEffect(() => {
+    props.onLoad();
+  }, [props]);
 
-  componentWillUnmount() {
-    this.props.onUnload();
-  }
+  useEffect(() => {
+    return () => {
+      props.onUnload();
+    };
+  }, [props]);
 
-  render() {
-    return (
-      <div className="home-page">
-        <div>
-          <div>
-            {this.props.currentUser ? <MainView /> : <Redirect to="/login" />}
-          </div>
-        </div>
+  return (
+    <div className="home-page">
+      <div>
+        <div>{props.currentUser ? <MainView /> : <Redirect to="/login" />}</div>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

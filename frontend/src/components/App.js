@@ -27,18 +27,20 @@ const mapDispatchToProps = (dispatch) => ({
 
 const App = (props) => {
   useEffect(() => {
-    if (props.redirectTo) {
-      store.dispatch(push(props.redirectTo));
-      props.onRedirect();
-    }
-
     const token = window.localStorage.getItem('jwt');
     if (token) {
       agent.setToken(token);
     }
 
     props.onLoad(token ? agent.Auth.current() : null, token);
-  });
+  }, []);
+
+  useEffect(() => {
+    if (props.redirectTo) {
+      store.dispatch(push(props.redirectTo));
+      props.onRedirect();
+    }
+  }, [props]);
 
   return props.appLoaded ? (
     <div>

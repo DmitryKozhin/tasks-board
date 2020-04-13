@@ -1,48 +1,23 @@
-import React, { useCallback } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import {
-  HIDE_ADD_COLUMN,
-  SHOW_ADD_COLUMN,
-  UPDATE_ADD_COLUMN_FIELD,
-  CREATE_COLUMN,
-} from '../../constants/actionTypes';
-import agent from '../../agent';
-
-const mapStateToProps = (state) => ({
-  ...state.columns,
-  selectedBoard: state.boards.selectedBoard.id,
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  onCreateColumn: (header, color, boardId) => {
-    if (!header) {
-      return;
-    }
-    let payload = agent.Column.create(header, color, boardId);
-    dispatch({ type: CREATE_COLUMN, payload });
-  },
-  onChangeHeader: (value) =>
-    dispatch({ type: UPDATE_ADD_COLUMN_FIELD, key: 'header', value }),
-  onChangeColor: (value) =>
-    dispatch({ type: UPDATE_ADD_COLUMN_FIELD, key: 'color', value }),
-});
 
 const AddColumnModal = (props) => {
+  const [header, setHeader] = useState('');
+  const [color, setColor] = useState('');
   // use callback после того, как поменять на FC
   // + bind action creators
-  const changeHeader = (ev) => {
-    props.onChangeHeader(ev.target.value);
-  };
-  const changeColor = (ev) => {
-    props.onChangeColor(ev.target.value);
-  };
+  const changeHeader = useCallback((ev) => {
+    setHeader(ev.target.value);
+  }, []);
+  const changeColor = useCallback((ev) => {
+    setColor(ev.target.value);
+  }, []);
   const saveAndCloseModal = useCallback(() => {
-    props.onCreateColumn(props.header, props.color, props.selectedBoard);
-  }, [props]);
+    props.onCreate(header, color);
+  }, [props, header, color]);
 
   return (
-    <Modal show={props.onShowModal} onHide={props.onHide}>
+    <Modal show={props.isShowing} onHide={props.onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add column</Modal.Title>
       </Modal.Header>
@@ -78,4 +53,4 @@ const AddColumnModal = (props) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddColumnModal);
+export default AddColumnModal;

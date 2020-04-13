@@ -1,22 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Column from './Column';
 import { connect } from 'react-redux';
-import { Button, ListGroup, CardGroup } from 'react-bootstrap';
+import { Button, CardGroup } from 'react-bootstrap';
 import AddColumnModal from './AddColumnModal';
-import { SHOW_ADD_COLUMN, HIDE_ADD_COLUMN } from '../../constants/actionTypes';
+import { CREATE_COLUMN } from '../../constants/actionTypes';
+import agent from '../../agent';
 
 const mapStateToProps = (state) => ({
   isShowing: state.columns.isShowing,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onShowModal: () => dispatch({ type: SHOW_ADD_COLUMN }),
-  onCloseModal: () => dispatch({ type: HIDE_ADD_COLUMN }),
+  onCreateColumn: (header, color, boardId) => {
+    if (!header) {
+      return;
+    }
+    let payload = agent.Column.create(header, color, boardId);
+    dispatch({ type: CREATE_COLUMN, payload });
+  },
 });
 
 const Board = (props) => {
-  const showModal = (ev) => props.onShowModal();
-  const closeModal = (ev) => props.onCloseModal();
+  const [isShowing, setShow] = useState(false);
+  const showModal = () => setShow(true);
+  const closeModal = () => setShow(false);
+  const createColumn = (header, color) => {
+    props.onCreateColumn(header, color, props.board.id);
+    setShow(false);
+  };
 
   return (
     <div>
@@ -38,11 +49,11 @@ const Board = (props) => {
           <span>Current board doesn't have any columns!</span>
         )}
 
-        {props.isShowing ? (
-          <AddColumnModal onShowModal={showModal} onHide={closeModal} />
-        ) : (
-          ''
-        )}
+        <AddColumnModal
+          isShowing={isShowing}
+          onHide={closeModal}
+          onCreate={createColumn}
+        />
       </CardGroup>
     </div>
   );
