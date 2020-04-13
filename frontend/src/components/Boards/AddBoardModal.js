@@ -3,11 +3,9 @@ import { Modal, Button, Form } from 'react-bootstrap';
 
 const AddBoardModal = (props) => {
   const [name, setName] = useState('');
-  // use callback после того, как поменять на FC
-  // + bind action creators
   const changeName = useCallback((ev) => {
     setName(ev.target.value);
-  });
+  }, []);
   const saveAndCloseModal = useCallback(() => {
     props.onCreate(name);
   }, [props, name]);

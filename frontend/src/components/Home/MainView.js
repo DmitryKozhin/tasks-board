@@ -3,7 +3,6 @@ import agent from '../../agent';
 import { connect } from 'react-redux';
 import {
   CHANGE_TAB,
-  SHOW_ADD_BOARD,
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
   CREATE_BOARD,
@@ -38,11 +37,12 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const MainView = (props) => {
+  const [isShowing, setShow] = useState(false);
+
   useEffect(() => {
     props.onLoad(agent.Board.all());
   }, []);
 
-  const [isShowing, setShow] = useState(false);
   const showModal = () => setShow(true);
   const closeModal = () => setShow(false);
   const createBoard = (name) => {

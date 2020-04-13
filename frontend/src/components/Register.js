@@ -1,10 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import React, { useEffect, useCallback, useState } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
 import { REGISTER, REGISTER_PAGE_UNLOADED } from '../constants/actionTypes';
 
-const mapStateToProps = (state) => ({ inProgress: state.auth.inProgress });
+const mapStateToProps = (state) => ({
+  inProgress: state.auth.inProgress,
+  currentUser: state.common.currentUser,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onSubmit: (username, email, password) => {
@@ -41,6 +44,10 @@ const Register = (props) => {
     },
     [props]
   );
+
+  if (props.currentUser) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="registration">

@@ -1,10 +1,13 @@
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import React, { useEffect, useState, useCallback } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
 import { LOGIN, LOGIN_PAGE_UNLOADED } from '../constants/actionTypes';
 
-const mapStateToProps = (state) => ({ ...state.auth });
+const mapStateToProps = (state) => ({
+  inProgress: state.auth.inProgress,
+  currentUser: state.common.currentUser,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onSubmit: (email, password) =>
@@ -29,6 +32,10 @@ const Login = (props) => {
     },
     [props, email, password]
   );
+
+  if (props.currentUser) {
+    return <Redirect to="/" />;
+  }
 
   return (
     <div className="auth">
