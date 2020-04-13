@@ -35,8 +35,8 @@ class Home extends React.Component {
   render() {
     return (
       <div className="home-page">
-        <div className="container page">
-          <div className="row">
+        <div>
+          <div>
             {this.props.currentUser ? <MainView /> : <Redirect to="/login" />}
           </div>
         </div>

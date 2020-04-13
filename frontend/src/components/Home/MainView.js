@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import agent from '../../agent';
 import { connect } from 'react-redux';
 import {
@@ -8,8 +8,9 @@ import {
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
 } from '../../constants/actionTypes';
-import AddBoardModal from '../AddBoardModal';
+import AddBoardModal from '../Boards/AddBoardModal';
 import { Form, Button } from 'react-bootstrap';
+import Board from '../Boards/Board';
 
 const mapStateToProps = (state) => ({
   ...state.boards,
@@ -31,39 +32,40 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-class MainView extends React.Component {
-  constructor() {
-    super();
+const MainView = (props) => {
+  useEffect(() => {
+    props.onLoad(agent.Board.all());
 
-    this.showModal = (ev) => this.props.onShowModal();
-    this.closeModal = (ev) => this.props.onCloseModal();
-    this.selectBoard = (ev) => this.props.onSelectBoard(ev.target.value);
-  }
+    return () => {
+      if (!props.selectedBoard && props.boards) {
+        props.onSelectBoard(props.boards[0].id);
+      }
+    };
+  });
 
-  componentWillMount() {
-    this.props.onLoad(agent.Board.all());
-  }
+  const showModal = () => props.onShowModal();
+  const closeModal = () => props.onCloseModal();
+  const selectBoard = (ev) => {
+    props.onSelectBoard(ev.target.value);
+  };
 
-  render() {
-    if (!this.props.selectedBoard && this.props.boards) {
-      this.props.onSelectBoard(this.props.boards[0].id);
-    }
-
-    return (
-      <div className="col-md-9 board">
+  return (
+    <div className="home">
+      <div className="home__board-selector">
         <Form>
           <Form.Group>
-            <div className="input-group mb-3">
+            <div className="input-group">
               <Form.Control
                 as="select"
                 size="sm"
                 custom
-                onChange={this.selectBoard}
+                value={props.selectedBoard?.id}
+                onChange={selectBoard}
               >
-                {this.props.boards ? (
-                  this.props.boards.map((board) => {
-                    return this.props.selectedBoard &&
-                      this.props.selectedBoard.id === board.id ? (
+                {props.boards ? (
+                  props.boards.map((board) => {
+                    return props.selectedBoard &&
+                      props.selectedBoard.id === board.id ? (
                       <option value={board.id} selected>
                         {board.name}
                       </option>
@@ -77,23 +79,31 @@ class MainView extends React.Component {
               </Form.Control>
               <Button
                 size="sm"
-                className="control-button"
-                onClick={this.showModal}
+                className="home__add-board"
+                onClick={props.onShowModal}
               >
                 Add
               </Button>
             </div>
           </Form.Group>
         </Form>
-
-        {this.props.isShowing ? (
-          <AddBoardModal show={this.showModal} onHide={this.closeModal} />
-        ) : (
-          ''
-        )}
       </div>
-    );
-  }
-}
+
+      {props.selectedBoard ? (
+        <div className="home__board">
+          <Board board={props.selectedBoard} />
+        </div>
+      ) : (
+        ''
+      )}
+
+      {props.isShowing ? (
+        <AddBoardModal onShowModal={showModal} onHide={closeModal} />
+      ) : (
+        ''
+      )}
+    </div>
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainView);

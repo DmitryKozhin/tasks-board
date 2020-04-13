@@ -7,6 +7,8 @@ using FluentValidation;
 
 using MediatR;
 
+using Microsoft.EntityFrameworkCore;
+
 using TasksBoard.Backend.Infrastructure.Context;
 using TasksBoard.Backend.Infrastructure.Errors;
 
@@ -43,7 +45,9 @@ namespace TasksBoard.Backend.Features.Boards
 
             public async Task<BoardEnvelope> Handle(Query request, CancellationToken cancellationToken)
             {
-                var board = await _context.Boards.FindAsync(request.BoardId);
+                var board = await _context.Boards
+                    .Include(t => t.Columns)
+                    .SingleOrDefaultAsync(t => t.Id == request.BoardId, cancellationToken);
 
                 if (board == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Board = Constants.NOT_FOUND });

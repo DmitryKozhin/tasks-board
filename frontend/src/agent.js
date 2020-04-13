@@ -48,9 +48,15 @@ const Board = {
   get: (id) => requests.get(`/board/${id}`),
 };
 
+const Column = {
+  create: (header, color = '', boardId) =>
+    requests.post('/column', { column: { header, color, boardId } }),
+};
+
 export default {
   Auth,
   Board,
+  Column,
   setToken: (_token) => {
     token = _token;
   },

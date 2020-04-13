@@ -5,6 +5,7 @@ import {
   UPDATE_ADD_BOARD_NAME,
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
+  CREATE_COLUMN,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -13,18 +14,18 @@ export default (state = {}, action) => {
       return {
         ...state,
         isShowing: true,
-        newBoardName: '',
+        name: '',
       };
     case HIDE_ADD_BOARD:
       return {
         ...state,
         isShowing: false,
-        newBoardName: '',
+        name: '',
       };
     case CREATE_BOARD:
       return {
         ...state,
-        newBoardName: '',
+        name: '',
         isShowing: false,
         boards: action.error
           ? null
@@ -35,7 +36,7 @@ export default (state = {}, action) => {
     case UPDATE_ADD_BOARD_NAME:
       return {
         ...state,
-        newBoardName: action.newBoardName,
+        name: action.name,
       };
 
     case MAIN_VIEW_LOAD: {
@@ -49,6 +50,18 @@ export default (state = {}, action) => {
       return {
         ...state,
         selectedBoard: action.error ? null : action.payload.board,
+      };
+    }
+
+    case CREATE_COLUMN: {
+      return {
+        ...state,
+        selectedBoard: {
+          ...state.selectedBoard,
+          columns: (state.selectedBoard.columns || []).concat([
+            action.payload.column,
+          ]),
+        },
       };
     }
 

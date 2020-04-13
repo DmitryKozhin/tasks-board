@@ -1,6 +1,6 @@
 import agent from '../agent';
 import Header from './Header';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { APP_LOAD, REDIRECT } from '../constants/actionTypes';
 import { Route, Switch } from 'react-router-dom';
@@ -25,48 +25,35 @@ const mapDispatchToProps = (dispatch) => ({
   onRedirect: () => dispatch({ type: REDIRECT }),
 });
 
-class App extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.redirectTo) {
-      store.dispatch(push(nextProps.redirectTo));
-      this.props.onRedirect();
+const App = (props) => {
+  useEffect(() => {
+    if (props.redirectTo) {
+      store.dispatch(push(props.redirectTo));
+      props.onRedirect();
     }
-  }
 
-  componentWillMount() {
     const token = window.localStorage.getItem('jwt');
     if (token) {
       agent.setToken(token);
     }
 
-    this.props.onLoad(token ? agent.Auth.current() : null, token);
-  }
+    props.onLoad(token ? agent.Auth.current() : null, token);
+  });
 
-  render() {
-    if (this.props.appLoaded) {
-      return (
-        <div className="container">
-          <Header
-            appName={this.props.appName}
-            currentUser={this.props.currentUser}
-          />
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-          </Switch>
-        </div>
-      );
-    }
-    return (
-      <div>
-        <Header
-          appName={this.props.appName}
-          currentUser={this.props.currentUser}
-        />
-      </div>
-    );
-  }
-}
+  return props.appLoaded ? (
+    <div>
+      <Header appName={props.appName} currentUser={props.currentUser} />
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="/register" component={Register} />
+      </Switch>
+    </div>
+  ) : (
+    <div>
+      <Header appName={props.appName} currentUser={props.currentUser} />
+    </div>
+  );
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
