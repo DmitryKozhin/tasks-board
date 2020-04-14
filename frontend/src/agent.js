@@ -59,6 +59,9 @@ const Column = {
 const Task = {
   create: (header, description = '', columnId) =>
     requests.post('/task', { task: { header, description, columnId } }),
+  delete: (id) => {
+    requests.del(`/task/${id}`);
+  },
 };
 
 export default {

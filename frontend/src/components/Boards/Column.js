@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { Card, Button } from 'react-bootstrap';
 import Task from './Task';
 import AddTaskModal from './AddTaskModal';
-import { UPDATE_COLUMN } from '../../constants/actionTypes';
+import { UPDATE_COLUMN, REMOVE_TASK } from '../../constants/actionTypes';
 import agent from '../../agent';
 
 const mapStateToProps = (state) => ({});
@@ -21,6 +21,14 @@ const mapDispatchToProps = (dispatch) => ({
 
     dispatch({ type: UPDATE_COLUMN, payload });
   },
+
+  onRemoveTask: (id, columnId) => {
+    const payload = agent.Task.delete(id);
+    dispatch({
+      type: REMOVE_TASK,
+      payload: { ...payload, taskId: id, columnId },
+    });
+  },
 });
 
 const Column = (props) => {
@@ -33,12 +41,16 @@ const Column = (props) => {
     setShow(false);
   };
 
+  const removeTask = (id) => {
+    props.onRemoveTask(id, props.column.id);
+  };
+
   return (
     <Card className="column" style={{ borderColor: '' }}>
       <Card.Header as="h5">{props.column.header}</Card.Header>
       <Card.Body className="overflow-auto">
         {props.column.tasks?.map((task) => (
-          <Task task={task} key={task.id} />
+          <Task task={task} key={task.id} onRemove={removeTask} />
         ))}
       </Card.Body>
       <AddTaskModal

@@ -54,9 +54,9 @@ const MainView = (props) => {
     props.onSelectBoard(ev.target.value);
   };
 
-  // if (!props.selectedBoard && props.boards) {
-  //   props.onSelectBoard(props.boards[0].id);
-  // }
+  if (!props.selectedBoard && props.boards) {
+    props.onSelectBoard(props.boards[0].id);
+  }
 
   return (
     <div className="home">

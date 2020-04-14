@@ -2,6 +2,7 @@ import {
   SELECT_BOARD,
   CREATE_COLUMN,
   UPDATE_COLUMN,
+  REMOVE_TASK,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -22,6 +23,24 @@ export default (state = {}, action) => {
       let columns = state.columns.map((column) =>
         column.id === action.payload.column.id ? action.payload.column : column
       );
+      return {
+        ...state,
+        columns: [...columns],
+      };
+    }
+
+    case REMOVE_TASK: {
+      let columns = state.columns.map((column) =>
+        column.id === action.payload.columnId
+          ? {
+              ...column,
+              tasks: column.tasks.filter(
+                (task) => task.id !== action.payload.taskId
+              ),
+            }
+          : column
+      );
+
       return {
         ...state,
         columns: [...columns],

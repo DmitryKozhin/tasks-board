@@ -19,3 +19,4 @@ export const CREATE_COLUMN = 'CREATE_COLUMN';
 export const CREATE_TASK = 'CREATE_TASK';
 export const UPDATE_BOARD = 'UPDATE_BOARD';
 export const UPDATE_COLUMN = 'UPDATE_COLUMN';
+export const REMOVE_TASK = 'REMOVE_TASK';
