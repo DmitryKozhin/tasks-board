@@ -1,19 +1,33 @@
-import { SELECT_BOARD, CREATE_COLUMN } from '../constants/actionTypes';
+import {
+  SELECT_BOARD,
+  CREATE_COLUMN,
+  UPDATE_COLUMN,
+} from '../constants/actionTypes';
 
 export default (state = {}, action) => {
   switch (action.type) {
     case CREATE_COLUMN: {
       return {
         ...state,
-        isShowing: false,
       };
     }
     case SELECT_BOARD: {
       return {
         ...state,
-        isShowing: false,
+        columns: action.error ? null : action.payload.board.columns,
       };
     }
+
+    case UPDATE_COLUMN: {
+      let columns = state.columns.map((column) =>
+        column.id === action.payload.column.id ? action.payload.column : column
+      );
+      return {
+        ...state,
+        columns: [...columns],
+      };
+    }
+
     default:
       return state;
   }

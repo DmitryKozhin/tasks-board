@@ -1,27 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Column from './Column';
 import { connect } from 'react-redux';
 import { Button, CardGroup } from 'react-bootstrap';
 import AddColumnModal from './AddColumnModal';
-import { CREATE_COLUMN } from '../../constants/actionTypes';
+import { UPDATE_BOARD } from '../../constants/actionTypes';
 import agent from '../../agent';
 
 const mapStateToProps = (state) => ({
-  isShowing: state.columns.isShowing,
+  board: state.boards.selectedBoard,
+  columns: state.columns.columns,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onCreateColumn: (header, color, boardId) => {
+  onCreateColumn: async (header, color, boardId) => {
     if (!header) {
       return;
     }
-    let payload = agent.Column.create(header, color, boardId);
-    dispatch({ type: CREATE_COLUMN, payload });
+
+    let columnEnvelope = await agent.Column.create(header, color, boardId);
+    let payload = agent.Board.edit(boardId, {
+      addedColumns: [columnEnvelope.column.id],
+    });
+
+    dispatch({ type: UPDATE_BOARD, payload });
   },
 });
 
 const Board = (props) => {
   const [isShowing, setShow] = useState(false);
+
   const showModal = () => setShow(true);
   const closeModal = () => setShow(false);
   const createColumn = (header, color) => {
@@ -41,8 +48,8 @@ const Board = (props) => {
       </Button>
 
       <CardGroup className="board__columns-container ">
-        {props.board.columns.length !== 0 ? (
-          props.board.columns.map((column) => (
+        {props.columns.length > 0 ? (
+          props.columns.map((column) => (
             <Column column={column} key={column.id} />
           ))
         ) : (

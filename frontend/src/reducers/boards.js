@@ -2,7 +2,7 @@ import {
   CREATE_BOARD,
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
-  CREATE_COLUMN,
+  UPDATE_BOARD,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -16,7 +16,6 @@ export default (state = {}, action) => {
           : (state.boards || []).concat([action.payload.board]),
         selectedBoard: action.payload.board,
       };
-
     case MAIN_VIEW_LOAD: {
       return {
         ...state,
@@ -24,25 +23,13 @@ export default (state = {}, action) => {
       };
     }
 
+    case UPDATE_BOARD:
     case SELECT_BOARD: {
       return {
         ...state,
         selectedBoard: action.error ? null : action.payload.board,
       };
     }
-
-    case CREATE_COLUMN: {
-      return {
-        ...state,
-        selectedBoard: {
-          ...state.selectedBoard,
-          columns: (state.selectedBoard.columns || []).concat([
-            action.payload.column,
-          ]),
-        },
-      };
-    }
-
     default:
       return state;
   }

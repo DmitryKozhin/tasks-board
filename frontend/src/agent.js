@@ -45,17 +45,27 @@ const Board = {
   all: () => requests.get('/board'),
   list: (name) => requests.get(`/board?name=${name}`),
   get: (id) => requests.get(`/board/${id}`),
+  edit: (id, payload) =>
+    requests.put(`/board/${id}`, { boardId: id, board: { ...payload } }),
 };
 
 const Column = {
   create: (header, color = '', boardId) =>
     requests.post('/column', { column: { header, color, boardId } }),
+  edit: (id, payload) =>
+    requests.put(`/column/${id}`, { columnId: id, column: { ...payload } }),
+};
+
+const Task = {
+  create: (header, description = '', columnId) =>
+    requests.post('/task', { task: { header, description, columnId } }),
 };
 
 export default {
   Auth,
   Board,
   Column,
+  Task,
   setToken: (_token) => {
     token = _token;
   },

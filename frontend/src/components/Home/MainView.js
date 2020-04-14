@@ -54,9 +54,9 @@ const MainView = (props) => {
     props.onSelectBoard(ev.target.value);
   };
 
-  if (!props.selectedBoard && props.boards) {
-    props.onSelectBoard(props.boards[0].id);
-  }
+  // if (!props.selectedBoard && props.boards) {
+  //   props.onSelectBoard(props.boards[0].id);
+  // }
 
   return (
     <div className="home">
@@ -97,7 +97,7 @@ const MainView = (props) => {
 
       {props.selectedBoard ? (
         <div className="home__board">
-          <Board board={props.selectedBoard} />
+          <Board />
         </div>
       ) : (
         ''
