@@ -51,11 +51,11 @@ namespace TasksBoard.Backend.Features.Boards
                     .ThenInclude(t => t.Tasks)
                     .SingleOrDefaultAsync(t => t.Id == request.BoardId, cancellationToken);
 
-                foreach (var column in board.Columns)
-                    column.Tasks = column.Tasks.OrderBy(t => t.OrderNum).ToList();
-
                 if (board == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Board = Constants.NOT_FOUND });
+
+                foreach (var column in board.Columns)
+                    column.Tasks = column.Tasks.OrderBy(t => t.OrderNum).ToList();
 
                 return new BoardEnvelope(board);
             }
