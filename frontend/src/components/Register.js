@@ -50,9 +50,9 @@ const Register = (props) => {
   }
 
   return (
-    <div className="registration">
-      <div className="container page">
-        <div className="row">
+    <div className="auth">
+      <div className="container auth__page">
+        <div className="row auth__form">
           <div className="col-md-6 offset-md-3 col-xs-12">
             <h1 className="text-xs-center">Sign Up</h1>
             <p className="text-xs-center">

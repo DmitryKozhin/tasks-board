@@ -39,8 +39,8 @@ const Login = (props) => {
 
   return (
     <div className="auth">
-      <div className="container page">
-        <div className="row">
+      <div className="container auth__page">
+        <div className="row auth__form">
           <div className="col-md-6 offset-md-3 col-xs-12">
             <h1 className="text-xs-center">Sign In</h1>
             <p className="text-xs-center">

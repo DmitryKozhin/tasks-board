@@ -57,7 +57,8 @@ const localStorageMiddleware = (store) => (next) => (action) => {
     window.localStorage.setItem('jwt', '');
     agent.setToken(null);
   } else if (action.type === SELECT_BOARD && action.error) {
-    agent.setToken(action.payload.user.token);
+    window.localStorage.setItem('jwt', '');
+    agent.setToken(null);
   }
 
   next(action);
