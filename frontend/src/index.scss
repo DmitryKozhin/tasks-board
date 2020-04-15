@@ -27,6 +27,8 @@ code {
   }
 
   &__add-board {
+    display: flex;
+    align-content: center;
     margin-left: 5px;
   }
 
@@ -50,6 +52,16 @@ code {
   height: calc(100vh - 205px);
   min-width: 25%;
   max-width: 25%;
+
+  &__header {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+  }
+
+  &__header-name {
+    margin-top: 5px;
+  }
 
   &__add-task {
     margin: 5px;

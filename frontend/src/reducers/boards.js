@@ -10,7 +10,6 @@ export default (state = {}, action) => {
     case CREATE_BOARD:
       return {
         ...state,
-        name: '',
         boards: action.error
           ? null
           : (state.boards || []).concat([action.payload.board]),

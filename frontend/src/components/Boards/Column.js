@@ -1,10 +1,11 @@
-import React, { useState, useCallback } from 'react';
-import { connect } from 'react-redux';
-import { Card, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Card, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Task from './Task';
 import AddTaskModal from './AddTaskModal';
+import { connect } from 'react-redux';
 import { UPDATE_COLUMN, REMOVE_TASK } from '../../constants/actionTypes';
 import agent from '../../agent';
+import { FaTimes } from 'react-icons/fa';
 
 const mapStateToProps = (state) => ({});
 
@@ -41,16 +42,39 @@ const Column = (props) => {
     setShow(false);
   };
 
+  const removeClick = () => {
+    props.onRemoveColumn(props.column.id);
+  };
+
   const removeTask = (id) => {
     props.onRemoveTask(id, props.column.id);
   };
 
   return (
-    <Card className="column" style={{ borderColor: '' }}>
-      <Card.Header as="h5">{props.column.header}</Card.Header>
+    <Card className="column">
+      <Card.Header as="h5">
+        <div className="column__header">
+          <div
+            className="column__header-name"
+            style={{ color: props.column.color }}
+          >
+            {props.column.header}
+          </div>
+          <OverlayTrigger overlay={<Tooltip>Remove a column</Tooltip>}>
+            <Button variant="link" onClick={removeClick}>
+              <FaTimes />
+            </Button>
+          </OverlayTrigger>
+        </div>
+      </Card.Header>
       <Card.Body className="overflow-auto">
         {props.column.tasks?.map((task) => (
-          <Task task={task} key={task.id} onRemove={removeTask} />
+          <Task
+            task={task}
+            key={task.id}
+            color={props.column.color}
+            onRemove={removeTask}
+          />
         ))}
       </Card.Body>
       <AddTaskModal

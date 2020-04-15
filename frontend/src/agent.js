@@ -50,10 +50,15 @@ const Board = {
 };
 
 const Column = {
-  create: (header, color = '', boardId) =>
-    requests.post('/column', { column: { header, color, boardId } }),
+  create: (header, color, boardId) =>
+    requests.post('/column', {
+      column: { header: header, color: color, boardId: boardId },
+    }),
   edit: (id, payload) =>
     requests.put(`/column/${id}`, { columnId: id, column: { ...payload } }),
+  delete: (id) => {
+    requests.del(`/column/${id}`);
+  },
 };
 
 const Task = {

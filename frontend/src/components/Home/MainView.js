@@ -8,8 +8,10 @@ import {
   CREATE_BOARD,
 } from '../../constants/actionTypes';
 import AddBoardModal from '../Boards/AddBoardModal';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Board from '../Boards/Board';
+import { REMOVE_COLUMN } from './../../constants/actionTypes';
+import { FaPlus } from 'react-icons/fa';
 
 const mapStateToProps = (state) => ({
   ...state.boards,
@@ -54,7 +56,7 @@ const MainView = (props) => {
     props.onSelectBoard(ev.target.value);
   };
 
-  if (!props.selectedBoard && props.boards) {
+  if (props.boards && props.boards.length > 0 && !props.selectedBoard) {
     props.onSelectBoard(props.boards[0].id);
   }
 
@@ -87,9 +89,15 @@ const MainView = (props) => {
                   <option>none</option>
                 )}
               </Form.Control>
-              <Button size="sm" className="home__add-board" onClick={showModal}>
-                Add
-              </Button>
+              <OverlayTrigger overlay={<Tooltip>Add a board</Tooltip>}>
+                <Button
+                  size="sm"
+                  className="home__add-board"
+                  onClick={showModal}
+                >
+                  <FaPlus />
+                </Button>
+              </OverlayTrigger>
             </div>
           </Form.Group>
         </Form>

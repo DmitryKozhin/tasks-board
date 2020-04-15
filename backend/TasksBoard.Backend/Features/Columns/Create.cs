@@ -33,7 +33,7 @@ namespace TasksBoard.Backend.Features.Columns
             public ColumnDataValidator()
             {
                 RuleFor(x => x.Header).NotNull().NotEmpty();
-                RuleFor(x => x.Color).NotNull().NotEmpty();
+                //RuleFor(x => x.Color).NotNull().NotEmpty();
                 RuleFor(x => x.BoardId).NotEmpty();
             }
         }

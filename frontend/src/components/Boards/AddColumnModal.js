@@ -1,23 +1,34 @@
 import React, { useCallback, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { SketchPicker } from 'react-color';
 
 const AddColumnModal = (props) => {
   const [header, setHeader] = useState('');
-  const [color, setColor] = useState('');
-  // use callback после того, как поменять на FC
-  // + bind action creators
+  const [color, setColor] = useState('#fff');
+
   const changeHeader = useCallback((ev) => {
     setHeader(ev.target.value);
   }, []);
-  const changeColor = useCallback((ev) => {
-    setColor(ev.target.value);
+  const changeColor = useCallback((color) => {
+    setColor(color);
   }, []);
-  const saveAndCloseModal = useCallback(() => {
-    props.onCreate(header, color);
-  }, [props, header, color]);
+
+  const handleSubmit = useCallback(() => {
+    setHeader('');
+    setColor('#fff');
+
+    props.onCreate(header, color.hex);
+  }, [setHeader, setColor, props, header, color]);
+
+  const onHide = useCallback(() => {
+    setHeader('');
+    setColor('#fff');
+
+    props.onHide();
+  }, [setHeader, setColor]);
 
   return (
-    <Modal show={props.isShowing} onHide={props.onHide}>
+    <Modal show={props.isShowing} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add column</Modal.Title>
       </Modal.Header>
@@ -27,25 +38,22 @@ const AddColumnModal = (props) => {
             <Form.Label>Header</Form.Label>
             <Form.Control
               type="input"
+              required
               onChange={changeHeader}
-              value={props.header}
+              value={header}
             />
           </Form.Group>
           <Form.Group>
             <Form.Label>Color</Form.Label>
-            <Form.Control
-              type="input"
-              onChange={changeColor}
-              value={props.color}
-            />
+            <SketchPicker color={color} onChangeComplete={changeColor} />
           </Form.Group>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={props.onHide}>
+        <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
-        <Button variant="primary" onClick={saveAndCloseModal}>
+        <Button variant="primary" onClick={handleSubmit}>
           Save
         </Button>
       </Modal.Footer>

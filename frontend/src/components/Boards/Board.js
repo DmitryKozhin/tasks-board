@@ -3,12 +3,12 @@ import Column from './Column';
 import { connect } from 'react-redux';
 import { Button, CardGroup } from 'react-bootstrap';
 import AddColumnModal from './AddColumnModal';
-import { UPDATE_BOARD } from '../../constants/actionTypes';
+import { UPDATE_BOARD, REMOVE_COLUMN } from '../../constants/actionTypes';
 import agent from '../../agent';
 
 const mapStateToProps = (state) => ({
   board: state.boards.selectedBoard,
-  columns: state.columns.columns,
+  columns: state.columns.columns || [],
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -23,6 +23,14 @@ const mapDispatchToProps = (dispatch) => ({
     });
 
     dispatch({ type: UPDATE_BOARD, payload });
+  },
+
+  onRemoveColumn: (id) => {
+    const payload = agent.Column.delete(id);
+    dispatch({
+      type: REMOVE_COLUMN,
+      payload: { ...payload, columnId: id },
+    });
   },
 });
 
@@ -50,7 +58,11 @@ const Board = (props) => {
       <CardGroup className="board__columns-container ">
         {props.columns.length > 0 ? (
           props.columns.map((column) => (
-            <Column column={column} key={column.id} />
+            <Column
+              column={column}
+              key={column.id}
+              onRemoveColumn={props.onRemoveColumn}
+            />
           ))
         ) : (
           <span>Current board doesn't have any columns!</span>

@@ -3,6 +3,9 @@ import {
   CREATE_COLUMN,
   UPDATE_COLUMN,
   REMOVE_TASK,
+  UPDATE_BOARD,
+  REMOVE_COLUMN,
+  CREATE_BOARD,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -12,10 +15,19 @@ export default (state = {}, action) => {
         ...state,
       };
     }
+
+    case CREATE_BOARD:
     case SELECT_BOARD: {
       return {
         ...state,
-        columns: action.error ? null : action.payload.board.columns,
+        columns: action.error ? null : action.payload.board.columns || [],
+      };
+    }
+
+    case UPDATE_BOARD: {
+      return {
+        ...state,
+        columns: action.payload.board.columns || [],
       };
     }
 
@@ -26,6 +38,17 @@ export default (state = {}, action) => {
       return {
         ...state,
         columns: [...columns],
+      };
+    }
+
+    case REMOVE_COLUMN: {
+      return {
+        ...state,
+        columns: [
+          ...state.columns.filter(
+            (column) => column.id !== action.payload.columnId
+          ),
+        ],
       };
     }
 

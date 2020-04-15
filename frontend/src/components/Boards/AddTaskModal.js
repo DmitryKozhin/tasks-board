@@ -33,7 +33,7 @@ const AddTaskModal = (props) => {
           <Form.Group>
             <Form.Label>Description</Form.Label>
             <Form.Control
-              type="input"
+              as="textarea"
               onChange={changeDescription}
               value={props.description}
             />
