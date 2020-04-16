@@ -93,6 +93,8 @@ namespace TasksBoard.Backend.Features.Boards
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
+
+                board.Columns = board.Columns.OrderBy(t => t.OrderNum).ToList();
                 return new BoardEnvelope(board);
             }
 

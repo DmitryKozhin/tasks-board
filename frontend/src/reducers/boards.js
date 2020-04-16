@@ -1,5 +1,6 @@
 import {
   CREATE_BOARD,
+  REMOVE_BOARD,
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
   UPDATE_BOARD,
@@ -7,6 +8,14 @@ import {
 
 export default (state = {}, action) => {
   switch (action.type) {
+    case REMOVE_BOARD:
+      return {
+        ...state,
+        boards: state.boards.filter(
+          (board) => board.id !== action.payload.boardId
+        ),
+        selectedBoard: null,
+      };
     case CREATE_BOARD:
       return {
         ...state,

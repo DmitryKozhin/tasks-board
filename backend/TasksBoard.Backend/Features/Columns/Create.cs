@@ -33,7 +33,7 @@ namespace TasksBoard.Backend.Features.Columns
             public ColumnDataValidator()
             {
                 RuleFor(x => x.Header).NotNull().NotEmpty();
-                //RuleFor(x => x.Color).NotNull().NotEmpty();
+                RuleFor(x => x.Color).NotNull().NotEmpty();
                 RuleFor(x => x.BoardId).NotEmpty();
             }
         }
@@ -70,8 +70,9 @@ namespace TasksBoard.Backend.Features.Columns
                 if (owner == null)
                     throw new RestException(HttpStatusCode.BadRequest, new { User = Constants.NOT_FOUND });
 
-                var board = await _context.Boards.SingleOrDefaultAsync(t => t.Id == request.Column.BoardId,
-                    cancellationToken);
+                var board = await _context.Boards
+                    .Include(t => t.Columns)
+                    .SingleOrDefaultAsync(t => t.Id == request.Column.BoardId, cancellationToken);
 
                 if (board == null)
                     throw new RestException(HttpStatusCode.BadRequest, new { Board = Constants.NOT_FOUND });

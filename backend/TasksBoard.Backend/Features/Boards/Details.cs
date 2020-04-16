@@ -54,6 +54,7 @@ namespace TasksBoard.Backend.Features.Boards
                 if (board == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Board = Constants.NOT_FOUND });
 
+                board.Columns = board.Columns.OrderBy(t => t.OrderNum).ToList();
                 foreach (var column in board.Columns)
                     column.Tasks = column.Tasks.OrderBy(t => t.OrderNum).ToList();
 

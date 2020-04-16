@@ -71,9 +71,9 @@ namespace TasksBoard.Backend.Features.Columns
                 if (request.Column.AddedTasks?.Any() == true)
                     await HandleTasks(request.Column.AddedTasks, t => column.Tasks.Add(t), cancellationToken);
 
-                column.Tasks = column.Tasks.OrderBy(t => t.OrderNum).ToList();
                 await _context.SaveChangesAsync(cancellationToken);
-
+                
+                column.Tasks = column.Tasks.OrderBy(t => t.OrderNum).ToList();
                 return new ColumnEnvelope(column);
             }
 

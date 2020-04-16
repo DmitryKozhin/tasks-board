@@ -12,6 +12,7 @@ export const REGISTER_PAGE_UNLOADED = 'REGISTER_PAGE_UNLOADED';
 export const ASYNC_START = 'ASYNC_START';
 export const ASYNC_END = 'ASYNC_END';
 export const CREATE_BOARD = 'CREATE_BOARD';
+export const REMOVE_BOARD = 'REMOVE_BOARD';
 export const MAIN_VIEW_LOAD = 'MAIN_VIEW_LOAD';
 export const SELECT_BOARD = 'SELECT_BOARD';
 export const SELECT_COLUMN = 'SELECT_COLUMN';

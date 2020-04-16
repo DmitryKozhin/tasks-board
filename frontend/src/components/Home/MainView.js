@@ -10,8 +10,8 @@ import {
 import AddBoardModal from '../Boards/AddBoardModal';
 import { Form, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Board from '../Boards/Board';
-import { REMOVE_COLUMN } from './../../constants/actionTypes';
-import { FaPlus } from 'react-icons/fa';
+import { REMOVE_BOARD } from './../../constants/actionTypes';
+import { FaPlus, FaTrash } from 'react-icons/fa';
 
 const mapStateToProps = (state) => ({
   ...state.boards,
@@ -36,6 +36,17 @@ const mapDispatchToProps = (dispatch) => ({
     let payload = agent.Board.create(name);
     dispatch({ type: CREATE_BOARD, payload });
   },
+
+  onRemoveBoard: (id) => {
+    let payload = agent.Board.delete(id);
+    dispatch({
+      type: REMOVE_BOARD,
+      payload: {
+        ...payload,
+        boardId: id,
+      },
+    });
+  },
 });
 
 const MainView = (props) => {
@@ -50,6 +61,12 @@ const MainView = (props) => {
   const createBoard = (name) => {
     props.onCreateBord(name);
     setShow(false);
+  };
+
+  const removeBoard = () => {
+    if (props.selectedBoard) {
+      props.onRemoveBoard(props.selectedBoard.id);
+    }
   };
 
   const selectBoard = (ev) => {
@@ -96,6 +113,15 @@ const MainView = (props) => {
                   onClick={showModal}
                 >
                   <FaPlus />
+                </Button>
+              </OverlayTrigger>
+              <OverlayTrigger overlay={<Tooltip>Remove a board</Tooltip>}>
+                <Button
+                  size="sm"
+                  onClick={removeBoard}
+                  className="home__add-board"
+                >
+                  <FaTrash />
                 </Button>
               </OverlayTrigger>
             </div>

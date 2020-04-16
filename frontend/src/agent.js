@@ -47,6 +47,7 @@ const Board = {
   get: (id) => requests.get(`/board/${id}`),
   edit: (id, payload) =>
     requests.put(`/board/${id}`, { boardId: id, board: { ...payload } }),
+  delete: (id) => requests.del(`/board/${id}`),
 };
 
 const Column = {
@@ -60,9 +61,7 @@ const Column = {
       columnId: id,
       column: { ...payload },
     }),
-  delete: (id) => {
-    requests.del(`/column/${id}`);
-  },
+  delete: (id) => requests.del(`/column/${id}`),
 };
 
 const Task = {
