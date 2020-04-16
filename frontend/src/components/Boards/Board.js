@@ -8,7 +8,6 @@ import {
   REMOVE_COLUMN,
   UPDATE_COLUMN,
   REMOVE_TASK,
-  CREATE_TASK,
 } from '../../constants/actionTypes';
 import agent from '../../agent';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -41,6 +40,14 @@ const mapDispatchToProps = (dispatch) => ({
   },
 
   onChangeTaskColumn: async (updateTaskData) => {
+    dispatch({
+      type: REMOVE_TASK,
+      payload: {
+        taskId: updateTaskData.task.id,
+        columnId: updateTaskData.oldColumn,
+      },
+    });
+
     await agent.Task.edit(updateTaskData.task.id, {
       columnId: updateTaskData.newColumn,
       orderNum: updateTaskData.task.orderNum,

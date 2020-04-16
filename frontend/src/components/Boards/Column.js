@@ -110,6 +110,7 @@ const Column = (props) => {
                   </Draggable>
                 );
               })}
+              {provided.placeholder}
             </Card.Body>
           );
         }}
