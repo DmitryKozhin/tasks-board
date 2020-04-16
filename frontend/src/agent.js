@@ -50,12 +50,16 @@ const Board = {
 };
 
 const Column = {
+  get: (id) => requests.get(`/column/${id}`),
   create: (header, color, boardId) =>
     requests.post('/column', {
       column: { header: header, color: color, boardId: boardId },
     }),
   edit: (id, payload) =>
-    requests.put(`/column/${id}`, { columnId: id, column: { ...payload } }),
+    requests.put(`/column/${id}`, {
+      columnId: id,
+      column: { ...payload },
+    }),
   delete: (id) => {
     requests.del(`/column/${id}`);
   },
@@ -67,6 +71,11 @@ const Task = {
   delete: (id) => {
     requests.del(`/task/${id}`);
   },
+  edit: (id, payload) =>
+    requests.put(`/task/${id}`, {
+      taskId: id,
+      task: { ...payload },
+    }),
 };
 
 export default {

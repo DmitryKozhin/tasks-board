@@ -6,6 +6,7 @@ import {
   UPDATE_BOARD,
   REMOVE_COLUMN,
   CREATE_BOARD,
+  CREATE_TASK,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -49,6 +50,22 @@ export default (state = {}, action) => {
             (column) => column.id !== action.payload.columnId
           ),
         ],
+      };
+    }
+
+    case CREATE_TASK: {
+      let columns = state.columns.map((column) =>
+        column.id === action.payload.columnId
+          ? {
+              ...column,
+              tasks: (column.tasks || []).concat([action.payload.task]),
+            }
+          : column
+      );
+
+      return {
+        ...state,
+        columns: [...columns],
       };
     }
 

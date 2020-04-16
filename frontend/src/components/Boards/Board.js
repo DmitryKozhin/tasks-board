@@ -3,8 +3,15 @@ import Column from './Column';
 import { connect } from 'react-redux';
 import { Button, CardGroup } from 'react-bootstrap';
 import AddColumnModal from './AddColumnModal';
-import { UPDATE_BOARD, REMOVE_COLUMN } from '../../constants/actionTypes';
+import {
+  UPDATE_BOARD,
+  REMOVE_COLUMN,
+  UPDATE_COLUMN,
+  REMOVE_TASK,
+  CREATE_TASK,
+} from '../../constants/actionTypes';
 import agent from '../../agent';
+import { DragDropContext } from 'react-beautiful-dnd';
 
 const mapStateToProps = (state) => ({
   board: state.boards.selectedBoard,
@@ -32,6 +39,37 @@ const mapDispatchToProps = (dispatch) => ({
       payload: { ...payload, columnId: id },
     });
   },
+
+  onChangeTaskColumn: async (updateTaskData) => {
+    await agent.Task.edit(updateTaskData.task.id, {
+      columnId: updateTaskData.newColumn,
+      orderNum: updateTaskData.task.orderNum,
+    });
+
+    let oldColumn = await agent.Column.get(updateTaskData.oldColumn);
+    dispatch({
+      type: UPDATE_COLUMN,
+      payload: { ...oldColumn },
+    });
+
+    let newColumn = await agent.Column.get(updateTaskData.newColumn);
+    dispatch({
+      type: UPDATE_COLUMN,
+      payload: { ...newColumn },
+    });
+  },
+
+  onChangeTaskOrder: async (updateTaskData) => {
+    await agent.Task.edit(updateTaskData.task.id, {
+      orderNum: updateTaskData.task.orderNum,
+    });
+
+    let column = await agent.Column.get(updateTaskData.column);
+    dispatch({
+      type: UPDATE_COLUMN,
+      payload: { ...column },
+    });
+  },
 });
 
 const Board = (props) => {
@@ -42,6 +80,35 @@ const Board = (props) => {
   const createColumn = (header, color) => {
     props.onCreateColumn(header, color, props.board.id);
     setShow(false);
+  };
+
+  const onDragEnd = (result, columns, changeSource, changeOrder) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns.find(
+        (column) => column.id === source.droppableId
+      );
+      const destColumn = columns.find(
+        (column) => column.id === destination.droppableId
+      );
+      const sourceTasks = [...sourceColumn.tasks];
+      const [removed] = sourceTasks.splice(source.index, 1);
+      changeSource({
+        task: { ...removed, orderNum: destination.index },
+        oldColumn: sourceColumn.id,
+        newColumn: destColumn.id,
+      });
+    } else {
+      const column = columns.find((column) => column.id === source.droppableId);
+      const sourceTasks = [...column.tasks];
+      const [removed] = sourceTasks.splice(source.index, 1);
+      changeOrder({
+        task: { ...removed, orderNum: destination.index },
+        column: column.id,
+      });
+    }
   };
 
   return (
@@ -56,17 +123,28 @@ const Board = (props) => {
       </Button>
 
       <CardGroup className="board__columns-container ">
-        {props.columns.length > 0 ? (
-          props.columns.map((column) => (
-            <Column
-              column={column}
-              key={column.id}
-              onRemoveColumn={props.onRemoveColumn}
-            />
-          ))
-        ) : (
-          <span>Current board doesn't have any columns!</span>
-        )}
+        <DragDropContext
+          onDragEnd={(result) =>
+            onDragEnd(
+              result,
+              props.columns,
+              props.onChangeTaskColumn,
+              props.onChangeTaskOrder
+            )
+          }
+        >
+          {props.columns.length > 0 ? (
+            props.columns.map((column) => (
+              <Column
+                column={column}
+                key={column.id}
+                onRemoveColumn={props.onRemoveColumn}
+              />
+            ))
+          ) : (
+            <span>Current board doesn't have any columns!</span>
+          )}
+        </DragDropContext>
 
         <AddColumnModal
           isShowing={isShowing}

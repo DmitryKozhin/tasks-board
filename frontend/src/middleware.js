@@ -5,7 +5,6 @@ import {
   LOGIN,
   LOGOUT,
   REGISTER,
-  SELECT_BOARD,
 } from './constants/actionTypes';
 
 const promiseMiddleware = (store) => (next) => (action) => {
@@ -54,9 +53,6 @@ const localStorageMiddleware = (store) => (next) => (action) => {
       agent.setToken(action.payload.user.token);
     }
   } else if (action.type === LOGOUT) {
-    window.localStorage.setItem('jwt', '');
-    agent.setToken(null);
-  } else if (action.type === SELECT_BOARD && action.error) {
     window.localStorage.setItem('jwt', '');
     agent.setToken(null);
   }

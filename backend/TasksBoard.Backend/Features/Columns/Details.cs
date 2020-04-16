@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,6 +7,8 @@ using System.Threading.Tasks;
 using FluentValidation;
 
 using MediatR;
+
+using Microsoft.EntityFrameworkCore;
 
 using TasksBoard.Backend.Infrastructure.Context;
 using TasksBoard.Backend.Infrastructure.Errors;
@@ -43,10 +46,14 @@ namespace TasksBoard.Backend.Features.Columns
 
             public async Task<ColumnEnvelope> Handle(Query request, CancellationToken cancellationToken)
             {
-                var column = await _context.Columns.FindAsync(request.ColumnId);
+                var column = await _context.Columns
+                    .Include(t => t.Tasks)
+                    .SingleOrDefaultAsync(t => t.Id == request.ColumnId, cancellationToken);
 
                 if (column == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Column = Constants.NOT_FOUND });
+
+                column.Tasks = column.Tasks.OrderBy(t => t.OrderNum).ToList();
 
                 return new ColumnEnvelope(column);
             }
