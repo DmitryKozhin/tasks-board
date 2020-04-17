@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { DropdownButton, ButtonGroup } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 
 const LoggedOutView = (props) => {
   if (!props.currentUser) {
@@ -33,9 +35,17 @@ const LoggedInView = (props) => {
         </li>
 
         <li className="nav-item">
-          <Link to="/" className="nav-link">
-            {props.currentUser.email}
-          </Link>
+          <DropdownButton
+            variant="link"
+            as={ButtonGroup}
+            title={props.currentUser.email}
+          >
+            <Dropdown.Item>Settings</Dropdown.Item>
+            <Dropdown.Item onClick={props.onLogout}>Logout</Dropdown.Item>
+          </DropdownButton>
+          {/* <Link to="/" className="nav-link">
+            
+          </Link> */}
         </li>
       </ul>
     );
@@ -51,7 +61,7 @@ const Header = (props) => {
         {props.appName}
       </Link>
 
-      <LoggedInView currentUser={props.currentUser} />
+      <LoggedInView currentUser={props.currentUser} onLogout={props.onLogout} />
       <LoggedOutView currentUser={props.currentUser} />
     </nav>
   );

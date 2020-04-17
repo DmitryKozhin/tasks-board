@@ -40,9 +40,9 @@ const Register = (props) => {
   const submitForm = useCallback(
     (ev) => {
       ev.preventDefault();
-      props.onSubmit(props.username, props.email, props.password);
+      props.onSubmit(username, email, password);
     },
-    [props]
+    [props, username, email, password]
   );
 
   if (props.currentUser) {

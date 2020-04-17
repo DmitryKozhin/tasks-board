@@ -2,7 +2,7 @@ import agent from '../agent';
 import Header from './Header';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { APP_LOAD, REDIRECT } from '../constants/actionTypes';
+import { APP_LOAD, REDIRECT, LOGOUT } from '../constants/actionTypes';
 import { Route, Switch } from 'react-router-dom';
 import Home from '../components/Home';
 import Login from '../components/Login';
@@ -23,6 +23,7 @@ const mapDispatchToProps = (dispatch) => ({
   onLoad: (payload, token) =>
     dispatch({ type: APP_LOAD, payload, token, skipTracking: true }),
   onRedirect: () => dispatch({ type: REDIRECT }),
+  onLogout: () => dispatch({ type: LOGOUT }),
 });
 
 const App = (props) => {
@@ -44,7 +45,11 @@ const App = (props) => {
 
   return props.appLoaded ? (
     <div>
-      <Header appName={props.appName} currentUser={props.currentUser} />
+      <Header
+        appName={props.appName}
+        currentUser={props.currentUser}
+        onLogout={props.onLogout}
+      />
       <Switch>
         <Route exact path="/" component={Home} />
         <Route path="/login" component={Login} />

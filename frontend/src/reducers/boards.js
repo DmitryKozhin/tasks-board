@@ -4,6 +4,7 @@ import {
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
   UPDATE_BOARD,
+  LOGOUT,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -36,6 +37,14 @@ export default (state = {}, action) => {
       return {
         ...state,
         selectedBoard: action.error ? null : action.payload.board,
+      };
+    }
+
+    case LOGOUT: {
+      return {
+        ...state,
+        selectedBoard: null,
+        boards: [],
       };
     }
     default:

@@ -7,6 +7,7 @@ import {
   REMOVE_COLUMN,
   CREATE_BOARD,
   CREATE_TASK,
+  LOGOUT,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -84,6 +85,13 @@ export default (state = {}, action) => {
       return {
         ...state,
         columns: [...columns],
+      };
+    }
+
+    case LOGOUT: {
+      return {
+        ...state,
+        columns: [],
       };
     }
 
