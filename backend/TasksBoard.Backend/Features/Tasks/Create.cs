@@ -69,7 +69,10 @@ namespace TasksBoard.Backend.Features.Tasks
                 if (owner == null)
                     throw new RestException(HttpStatusCode.BadRequest, new { User = Constants.NOT_FOUND });
 
-                var column = await _context.Columns.SingleOrDefaultAsync(t => t.Id == request.Task.ColumnId, cancellationToken);
+                var column = await _context.Columns
+                    .Include(t => t.Tasks)
+                    .SingleOrDefaultAsync(t => t.Id == request.Task.ColumnId, cancellationToken);
+                
                 if (column == null)
                     throw new RestException(HttpStatusCode.BadRequest, new { Column = Constants.NOT_FOUND });
 

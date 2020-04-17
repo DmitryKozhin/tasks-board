@@ -16,6 +16,8 @@ using TasksBoard.Backend.Infrastructure.Context;
 using TasksBoard.Backend.Infrastructure.Errors;
 using TasksBoard.Backend.Infrastructure.Extensions;
 
+using Task = TasksBoard.Backend.Domain.Task;
+
 namespace TasksBoard.Backend.Features.Tasks
 {
     public class Edit
@@ -57,6 +59,8 @@ namespace TasksBoard.Backend.Features.Tasks
             public async Task<TaskEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
                 var task = await _context.Tasks
+                    .Include(t => t.Column)
+                    .ThenInclude(t => t.Tasks)
                     .Include(t => t.AssignedUsers)
                     .ThenInclude(t => t.User)
                     .SingleOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken);
@@ -66,7 +70,13 @@ namespace TasksBoard.Backend.Features.Tasks
 
                 task.Header = request.Task.Header ?? task.Header;
                 task.Description = request.Task.Description ?? task.Description;
-                task.OrderNum = request.Task.OrderNum ?? task.OrderNum;
+
+                if (!request.Task.ColumnId.TryGetValue(out _) &&
+                    request.Task.OrderNum.TryGetValue(out var orderNum))
+                {
+                    task.Column.Tasks.UpdateOrder(task, orderNum);
+                    task.OrderNum = orderNum;
+                }
 
                 if (request.Task.AssignedUsers?.Any() == true)
                 {
@@ -89,11 +99,17 @@ namespace TasksBoard.Backend.Features.Tasks
                 
                 if (request.Task.ColumnId.TryGetValue(out var columnId) && task.ColumnId != columnId)
                 {
-                    var oldColumn = await _context.Columns.SingleAsync(t => t.Id == task.ColumnId, cancellationToken);
-                    var newColumn = await _context.Columns.SingleAsync(t => t.Id == columnId, cancellationToken);
-                    oldColumn.Tasks.Remove(task);
-                    newColumn.Tasks.Add(task);
+                    var oldColumn = task.Column;
+                    var newColumn = await _context.Columns
+                        .Include(t => t.Tasks)
+                        .SingleAsync(t => t.Id == columnId, cancellationToken);
 
+                    task.OrderNum = request.Task.OrderNum ?? task.OrderNum;
+                    oldColumn.Tasks.Remove(task);
+                    oldColumn.Tasks.UpdateOrder();
+                    newColumn.Tasks.UpdateOrder(task);
+                    newColumn.Tasks.Add(task);
+                    
                     task.ColumnId = columnId;
                 }
 

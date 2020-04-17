@@ -28,6 +28,7 @@ namespace TasksBoard.Backend.Domain
         [JsonIgnore]
         public Column Column { get; set; }
 
+        [JsonIgnore]
         public ICollection<UserTask> AssignedUsers { get; set; }
     }
 }

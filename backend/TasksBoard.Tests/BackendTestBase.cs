@@ -135,7 +135,7 @@ namespace TasksBoard.Tests
                 {
                     new ClaimsIdentity(new List<Claim>()
                     {
-                        new Claim(ClaimTypes.Email, "email")
+                        new Claim(ClaimTypes.NameIdentifier, "email")
                     })
                 }))
             };

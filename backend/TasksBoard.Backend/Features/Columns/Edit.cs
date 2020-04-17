@@ -54,7 +54,9 @@ namespace TasksBoard.Backend.Features.Columns
             public async Task<ColumnEnvelope> Handle(Command request, CancellationToken cancellationToken)
             {
                 var column =
-                    await _context.Columns.SingleOrDefaultAsync(t => t.Id == request.ColumnId, cancellationToken);
+                    await _context.Columns
+                        .Include(t => t.Tasks)
+                        .SingleOrDefaultAsync(t => t.Id == request.ColumnId, cancellationToken);
 
                 if (column == null)
                     throw new RestException(HttpStatusCode.NotFound, new { Column = Constants.NOT_FOUND });
@@ -70,7 +72,8 @@ namespace TasksBoard.Backend.Features.Columns
                     await HandleTasks(request.Column.AddedTasks, t => column.Tasks.Add(t), cancellationToken);
 
                 await _context.SaveChangesAsync(cancellationToken);
-
+                
+                column.Tasks = column.Tasks.OrderBy(t => t.OrderNum).ToList();
                 return new ColumnEnvelope(column);
             }
 

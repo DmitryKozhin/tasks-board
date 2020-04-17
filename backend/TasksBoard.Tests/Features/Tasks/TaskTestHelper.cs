@@ -46,7 +46,8 @@ namespace TasksBoard.Tests.Features.Tasks
                 ColumnId = columnId,
                 OwnerId = userId,
                 Header = header,
-                Description = description
+                Description = description,
+                OrderNum = context.Tasks.Any() ? context.Tasks.Max(t => t.OrderNum) + 1 : default
             };
 
             await context.Tasks.AddAsync(task);
