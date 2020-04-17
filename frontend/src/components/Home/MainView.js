@@ -94,17 +94,13 @@ const MainView = (props) => {
                 <option value="default" disabled>
                   Choose a board ...
                 </option>
-                {props.boards ? (
-                  props.boards.map((board) => {
-                    return (
-                      <option key={board.id} value={board.id}>
-                        {board.name}
-                      </option>
-                    );
-                  })
-                ) : (
-                  <option>none</option>
-                )}
+                {props.boards?.map((board) => {
+                  return (
+                    <option key={board.id} value={board.id}>
+                      {board.name}
+                    </option>
+                  );
+                })}
               </Form.Control>
               <OverlayTrigger overlay={<Tooltip>Add a board</Tooltip>}>
                 <Button

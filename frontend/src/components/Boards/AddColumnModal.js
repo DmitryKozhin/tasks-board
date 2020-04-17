@@ -2,30 +2,34 @@ import React, { useCallback, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
 
+const defaultColor = '#3486eb';
+
 const AddColumnModal = (props) => {
   const [header, setHeader] = useState('');
-  const [color, setColor] = useState('#fff');
+  const [color, setColor] = useState(defaultColor);
+
+  const clearState = useCallback(() => {
+    setHeader('');
+    setColor(defaultColor);
+  }, [setHeader, setColor]);
 
   const changeHeader = useCallback((ev) => {
     setHeader(ev.target.value);
   }, []);
+
   const changeColor = useCallback((color) => {
     setColor(color);
   }, []);
 
   const handleSubmit = useCallback(() => {
-    setHeader('');
-    setColor('#fff');
-
-    props.onCreate(header, color.hex);
-  }, [setHeader, setColor, props, header, color]);
+    props.onCreate(header, color.hex || defaultColor);
+    clearState();
+  }, [props, header, color, clearState]);
 
   const onHide = useCallback(() => {
-    setHeader('');
-    setColor('#fff');
-
     props.onHide();
-  }, [setHeader, setColor]);
+    clearState();
+  }, [props, clearState]);
 
   return (
     <Modal show={props.isShowing} onHide={onHide}>

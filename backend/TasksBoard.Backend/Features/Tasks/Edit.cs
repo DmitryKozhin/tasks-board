@@ -104,7 +104,7 @@ namespace TasksBoard.Backend.Features.Tasks
                         .Include(t => t.Tasks)
                         .SingleAsync(t => t.Id == columnId, cancellationToken);
 
-                    task.OrderNum = request.Task.OrderNum.Value;
+                    task.OrderNum = request.Task.OrderNum ?? task.OrderNum;
                     oldColumn.Tasks.Remove(task);
                     oldColumn.Tasks.UpdateOrder();
                     newColumn.Tasks.UpdateOrder(task);

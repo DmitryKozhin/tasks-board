@@ -5,18 +5,31 @@ const AddTaskModal = (props) => {
   const [header, setHeader] = useState('');
   const [description, setDescription] = useState('');
 
+  const clearState = useCallback(() => {
+    setHeader('');
+    setDescription('');
+  }, [setHeader, setDescription]);
+
   const changeHeader = useCallback((ev) => {
     setHeader(ev.target.value);
   }, []);
+
   const changeDescription = useCallback((ev) => {
     setDescription(ev.target.value);
   }, []);
+
   const saveAndCloseModal = useCallback(() => {
     props.onCreate(header, description);
-  }, [props, header, description]);
+    clearState();
+  }, [props, header, description, clearState]);
+
+  const onHide = useCallback(() => {
+    props.onHide();
+    clearState();
+  }, [props, clearState]);
 
   return (
-    <Modal show={props.isShowing} onHide={props.onHide}>
+    <Modal show={props.isShowing} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add task</Modal.Title>
       </Modal.Header>
@@ -41,7 +54,7 @@ const AddTaskModal = (props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={props.onHide}>
+        <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
         <Button variant="primary" onClick={saveAndCloseModal}>

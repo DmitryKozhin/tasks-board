@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Column from './Column';
 import { connect } from 'react-redux';
 import { Button, CardGroup } from 'react-bootstrap';

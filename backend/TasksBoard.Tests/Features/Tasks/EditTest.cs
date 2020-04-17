@@ -41,7 +41,6 @@ namespace TasksBoard.Tests.Features.Tasks
                     ColumnId = columnId1,
                     Description = "description",
                     Header = "header",
-                    OrderNum = 1
                 }
             };
 
@@ -54,7 +53,7 @@ namespace TasksBoard.Tests.Features.Tasks
             updated.Should().NotBeNull();
             updated.Header.Should().BeEquivalentTo(command.Task.Header);
             updated.Description.Should().BeEquivalentTo(command.Task.Description);
-            updated.OrderNum.Should().Be(command.Task.OrderNum.Value);
+            updated.OrderNum.Should().Be(0);
             updated.ColumnId.Should().Be(columnId1);
 
             oldColumnWithUpdatedTask.Tasks.Should().NotContain(updated);
@@ -134,6 +133,89 @@ namespace TasksBoard.Tests.Features.Tasks
             var assignedUserIds = updated.AssignedUsers.Select(t => t.UserId).ToList();
             foreach (var userId in new[] { user1Id, user3Id })
                 assignedUserIds.Should().Contain(userId);
+        }
+
+        [Fact]
+        public async Task Edit_ChangeColumnAndOrder_ColumnAndOrderChanged()
+        {
+            var userId = await CreateUser();
+            var column1Id = await TaskTestHelper.CreateColumn(
+                ContextInjector.WriteContext, userId);
+
+            var column2Id = await TaskTestHelper.CreateColumn(
+                ContextInjector.WriteContext, userId);
+
+            var task1InFirstColumn =
+                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, column1Id, "test", "test_desc");
+            var task2InFirstColumn =
+                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, column1Id, "test1", "test_desc1");
+            var task3InFirstColumn =
+                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, column1Id, "test2", "test_desc2");
+
+            var command = new Edit.Command()
+            {
+                TaskId = task1InFirstColumn,
+                Task = new Edit.TaskData()
+                {
+                    ColumnId = column2Id
+                }
+            };
+
+            await SendAsync(command);
+
+            var updated = await ExecuteDbContextAsync(db => db.Tasks
+                .Include(t => t.Column)
+                .ThenInclude(t => t.Tasks)
+                .SingleOrDefaultAsync(d => d.Id == command.TaskId));
+
+            var oldColumn = await ExecuteDbContextAsync(db =>
+                db.Columns.Include(t => t.Tasks).SingleOrDefaultAsync(t => t.Id == column1Id));
+
+            updated.Should().NotBeNull();
+            updated.ColumnId.Should().Be(column2Id);
+            updated.OrderNum.Should().Be(0);
+            oldColumn.Tasks.Should().HaveCount(2);
+            oldColumn.Tasks.SingleOrDefault(t => t.Id == task2InFirstColumn).OrderNum.Should().Be(0);
+            oldColumn.Tasks.SingleOrDefault(t => t.Id == task3InFirstColumn).OrderNum.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task Edit_ChangeOrder_OrderChanged()
+        {
+            var userId = await CreateUser();
+            var column1Id = await TaskTestHelper.CreateColumn(
+                ContextInjector.WriteContext, userId);
+
+            var task1InFirstColumn =
+                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, column1Id, "test", "test_desc");
+            var task2InFirstColumn =
+                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, column1Id, "test1", "test_desc1");
+            var task3InFirstColumn =
+                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, column1Id, "test2", "test_desc2");
+            var task4InFirstColumn =
+                await TaskTestHelper.CreateTask(ContextInjector.WriteContext, userId, column1Id, "test3", "test_desc3");
+
+            var command = new Edit.Command()
+            {
+                TaskId = task1InFirstColumn,
+                Task = new Edit.TaskData()
+                {
+                    OrderNum = 3
+                }
+            };
+
+            await SendAsync(command);
+
+            var updated = await ExecuteDbContextAsync(db => db.Tasks
+                .Include(t => t.Column)
+                .ThenInclude(t => t.Tasks)
+                .SingleOrDefaultAsync(d => d.Id == command.TaskId));
+
+            updated.Should().NotBeNull();
+            updated.OrderNum.Should().Be(command.Task.OrderNum);
+            updated.Column.Tasks.SingleOrDefault(t => t.Id == task2InFirstColumn).OrderNum.Should().Be(0);
+            updated.Column.Tasks.SingleOrDefault(t => t.Id == task3InFirstColumn).OrderNum.Should().Be(1);
+            updated.Column.Tasks.SingleOrDefault(t => t.Id == task4InFirstColumn).OrderNum.Should().Be(2);
         }
     }
 }

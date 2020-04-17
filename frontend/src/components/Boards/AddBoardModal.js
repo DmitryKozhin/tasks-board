@@ -3,15 +3,23 @@ import { Modal, Button, Form } from 'react-bootstrap';
 
 const AddBoardModal = (props) => {
   const [name, setName] = useState('');
+
   const changeName = useCallback((ev) => {
     setName(ev.target.value);
   }, []);
+
   const saveAndCloseModal = useCallback(() => {
     props.onCreate(name);
-  }, [props, name]);
+    setName('');
+  }, [setName, props, name]);
+
+  const onHide = useCallback(() => {
+    props.onHide();
+    setName('');
+  }, [setName, props]);
 
   return (
-    <Modal show={props.isShowing} onHide={props.onHide}>
+    <Modal show={props.isShowing} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add board</Modal.Title>
       </Modal.Header>
@@ -31,7 +39,7 @@ const AddBoardModal = (props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={props.onHide}>
+        <Button variant="secondary" onClick={onHide}>
           Close
         </Button>
         <Button variant="primary" onClick={saveAndCloseModal}>

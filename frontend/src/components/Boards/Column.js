@@ -3,16 +3,10 @@ import { Card, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Task from './Task';
 import AddTaskModal from './AddTaskModal';
 import { connect } from 'react-redux';
-import {
-  UPDATE_COLUMN,
-  REMOVE_TASK,
-  CREATE_TASK,
-} from '../../constants/actionTypes';
+import { REMOVE_TASK, CREATE_TASK } from '../../constants/actionTypes';
 import agent from '../../agent';
 import { FaTimes } from 'react-icons/fa';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-
-const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => ({
   onCreateTask: async (header, description, columnId) => {
@@ -132,4 +126,4 @@ const Column = (props) => {
   );
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Column);
+export default connect(mapDispatchToProps)(Column);
