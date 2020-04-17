@@ -54,16 +54,16 @@ const mapDispatchToProps = (dispatch) => ({
       orderNum: updateTaskData.task.orderNum,
     });
 
-    let oldColumn = await agent.Column.get(updateTaskData.oldColumn);
+    let oldColumnPayload = agent.Column.get(updateTaskData.oldColumn);
     dispatch({
       type: UPDATE_COLUMN,
-      payload: { ...oldColumn },
+      payload: oldColumnPayload,
     });
 
-    let newColumn = await agent.Column.get(updateTaskData.newColumn);
+    let newColumnPayload = agent.Column.get(updateTaskData.newColumn);
     dispatch({
       type: UPDATE_COLUMN,
-      payload: { ...newColumn },
+      payload: newColumnPayload,
     });
   },
 
@@ -72,10 +72,10 @@ const mapDispatchToProps = (dispatch) => ({
       orderNum: updateTaskData.task.orderNum,
     });
 
-    let column = await agent.Column.get(updateTaskData.column);
-    dispatch({
+    let payload = agent.Column.get(updateTaskData.column);
+    return dispatch({
       type: UPDATE_COLUMN,
-      payload: { ...column },
+      payload,
     });
   },
 });

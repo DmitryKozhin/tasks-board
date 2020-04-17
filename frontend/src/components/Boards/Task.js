@@ -10,11 +10,11 @@ import AddTaskModal from './AddTaskModal';
 const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => ({
-  onEditTask: async (id, columnId, header, description) => {
-    const payload = await agent.Task.edit(id, { header, description });
+  onEditTask: (id, header, description) => {
+    const payload = agent.Task.edit(id, { header, description });
     dispatch({
       type: UPDATE_TASK,
-      payload: { ...payload, columnId },
+      payload,
     });
   },
 });
@@ -46,7 +46,7 @@ const Task = (props) => {
         header !== props.task.header ||
         description !== props.task.description
       ) {
-        props.onEditTask(props.task.id, props.columnId, header, description);
+        props.onEditTask(props.task.id, header, description);
       }
       setShow(false);
     },

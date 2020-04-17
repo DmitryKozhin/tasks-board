@@ -23,7 +23,6 @@ namespace TasksBoard.Backend.Domain
 
         public List<Comment> Comments { get; set; }
 
-        [JsonIgnore]
         public Guid ColumnId { get; set; }
         [JsonIgnore]
         public Column Column { get; set; }

@@ -57,7 +57,7 @@ export default (state = {}, action) => {
 
     case UPDATE_TASK: {
       let columns = state.columns.map((column) =>
-        column.id === action.payload.columnId
+        column.id === action.payload.task.columnId
           ? {
               ...column,
               tasks: column.tasks.map((task) =>
@@ -75,7 +75,7 @@ export default (state = {}, action) => {
 
     case CREATE_TASK: {
       let columns = state.columns.map((column) =>
-        column.id === action.payload.columnId
+        column.id === action.payload.task.columnId
           ? {
               ...column,
               tasks: (column.tasks || []).concat([action.payload.task]),

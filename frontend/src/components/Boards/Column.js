@@ -12,15 +12,15 @@ import { useCallback } from 'react';
 const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => ({
-  onCreateTask: async (header, description, columnId) => {
+  onCreateTask: (header, description, columnId) => {
     if (!header) {
       return;
     }
 
-    let payload = await agent.Task.create(header, description, columnId);
+    let payload = agent.Task.create(header, description, columnId);
     dispatch({
       type: CREATE_TASK,
-      payload: { ...payload, columnId },
+      payload,
     });
   },
 
@@ -102,7 +102,6 @@ const Column = (props) => {
                             task={task}
                             key={task.id}
                             color={props.column.color}
-                            columnId={props.column.id}
                             onRemove={removeTask}
                           />
                         </div>
