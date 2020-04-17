@@ -3,7 +3,10 @@ import _superagent from 'superagent';
 
 const superagent = superagentPromise(_superagent, global.Promise);
 
-const API_ROOT = 'http://localhost:5000';
+const API_ROOT =
+  process.env.NODE_ENV === 'development'
+    ? 'http://localhost:5000'
+    : process.env.TasksBoard_Backend;
 
 const responseBody = (res) => res.body;
 
