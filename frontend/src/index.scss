@@ -78,3 +78,11 @@ code {
     margin: 5px;
   }
 }
+
+.task {
+  max-width: none;
+
+  &__header {
+    min-height: 40px;
+  }
+}

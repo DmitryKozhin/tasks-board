@@ -8,6 +8,7 @@ import {
   CREATE_BOARD,
   CREATE_TASK,
   LOGOUT,
+  UPDATE_TASK,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -51,6 +52,24 @@ export default (state = {}, action) => {
             (column) => column.id !== action.payload.columnId
           ),
         ],
+      };
+    }
+
+    case UPDATE_TASK: {
+      let columns = state.columns.map((column) =>
+        column.id === action.payload.columnId
+          ? {
+              ...column,
+              tasks: column.tasks.map((task) =>
+                task.id === action.payload.task.id ? action.payload.task : task
+              ),
+            }
+          : column
+      );
+
+      return {
+        ...state,
+        columns: [...columns],
       };
     }
 

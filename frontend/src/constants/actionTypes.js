@@ -22,3 +22,4 @@ export const UPDATE_BOARD = 'UPDATE_BOARD';
 export const UPDATE_COLUMN = 'UPDATE_COLUMN';
 export const REMOVE_TASK = 'REMOVE_TASK';
 export const REMOVE_COLUMN = 'REMOVE_COLUMN';
+export const UPDATE_TASK = 'UPDATE_TASK';

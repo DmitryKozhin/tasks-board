@@ -11,6 +11,7 @@ import {
 } from '../../constants/actionTypes';
 import agent from '../../agent';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { useCallback } from 'react';
 
 const mapStateToProps = (state) => ({
   board: state.boards.selectedBoard,
@@ -84,10 +85,13 @@ const Board = (props) => {
 
   const showModal = () => setShow(true);
   const closeModal = () => setShow(false);
-  const createColumn = (header, color) => {
-    props.onCreateColumn(header, color, props.board.id);
-    setShow(false);
-  };
+  const createColumn = useCallback(
+    (header, color) => {
+      props.onCreateColumn(header, color, props.board.id);
+      setShow(false);
+    },
+    [props, setShow]
+  );
 
   const onDragEnd = (result, columns, changeSource, changeOrder) => {
     if (!result.destination) return;
@@ -110,9 +114,9 @@ const Board = (props) => {
     } else {
       const column = columns.find((column) => column.id === source.droppableId);
       const sourceTasks = [...column.tasks];
-      const [removed] = sourceTasks.splice(source.index, 1);
+      const [changed] = sourceTasks.splice(source.index, 1);
       changeOrder({
-        task: { ...removed, orderNum: destination.index },
+        task: { ...changed, orderNum: destination.index },
         column: column.id,
       });
     }
@@ -152,13 +156,13 @@ const Board = (props) => {
             <span>Current board doesn't have any columns!</span>
           )}
         </DragDropContext>
-
-        <AddColumnModal
-          isShowing={isShowing}
-          onHide={closeModal}
-          onCreate={createColumn}
-        />
       </CardGroup>
+
+      <AddColumnModal
+        isShowing={isShowing}
+        onHide={closeModal}
+        onCreate={createColumn}
+      />
     </div>
   );
 };

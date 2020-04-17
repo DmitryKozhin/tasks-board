@@ -7,6 +7,7 @@ import { REMOVE_TASK, CREATE_TASK } from '../../constants/actionTypes';
 import agent from '../../agent';
 import { FaTimes } from 'react-icons/fa';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { useCallback } from 'react';
 
 const mapStateToProps = (state) => ({});
 
@@ -37,10 +38,13 @@ const Column = (props) => {
 
   const showModal = () => setShow(true);
   const closeModal = () => setShow(false);
-  const createTask = (header, description) => {
-    props.onCreateTask(header, description, props.column.id);
-    setShow(false);
-  };
+  const createTask = useCallback(
+    (header, description) => {
+      props.onCreateTask(header, description, props.column.id);
+      setShow(false);
+    },
+    [props, setShow]
+  );
 
   const removeClick = () => {
     props.onRemoveColumn(props.column.id);
@@ -98,6 +102,7 @@ const Column = (props) => {
                             task={task}
                             key={task.id}
                             color={props.column.color}
+                            columnId={props.column.id}
                             onRemove={removeTask}
                           />
                         </div>
@@ -115,7 +120,7 @@ const Column = (props) => {
       <AddTaskModal
         isShowing={isShowing}
         onHide={closeModal}
-        onCreate={createTask}
+        onSave={createTask}
       />
       <Button
         variant="outline-primary column__add-task"

@@ -1,9 +1,15 @@
 import React, { useCallback, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+import { useEffect } from 'react';
 
 const AddTaskModal = (props) => {
   const [header, setHeader] = useState('');
   const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    setHeader(props.task?.header);
+    setDescription(props.task?.description);
+  }, [props, setHeader, setDescription]);
 
   const clearState = useCallback(() => {
     setHeader('');
@@ -19,7 +25,7 @@ const AddTaskModal = (props) => {
   }, []);
 
   const saveAndCloseModal = useCallback(() => {
-    props.onCreate(header, description);
+    props.onSave(header, description);
     clearState();
   }, [props, header, description, clearState]);
 
@@ -31,24 +37,23 @@ const AddTaskModal = (props) => {
   return (
     <Modal show={props.isShowing} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Add task</Modal.Title>
+        <Modal.Title>{`${props.task ? 'Edit' : 'Add'} task`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Group>
             <Form.Label>Header</Form.Label>
-            <Form.Control
-              type="input"
-              onChange={changeHeader}
-              value={props.header}
-            />
+            <Form.Control type="input" onChange={changeHeader} value={header} />
           </Form.Group>
           <Form.Group>
             <Form.Label>Description</Form.Label>
             <Form.Control
               as="textarea"
+              style={{
+                height: props.task?.description ? '15rem' : null,
+              }}
               onChange={changeDescription}
-              value={props.description}
+              value={description}
             />
           </Form.Group>
         </Form>
