@@ -8,6 +8,8 @@ import agent from '../../agent';
 import { FaTimes } from 'react-icons/fa';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 
+const mapStateToProps = (state) => ({});
+
 const mapDispatchToProps = (dispatch) => ({
   onCreateTask: async (header, description, columnId) => {
     if (!header) {
@@ -126,4 +128,4 @@ const Column = (props) => {
   );
 };
 
-export default connect(mapDispatchToProps)(Column);
+export default connect(mapStateToProps, mapDispatchToProps)(Column);
