@@ -23,3 +23,4 @@ export const UPDATE_COLUMN = 'UPDATE_COLUMN';
 export const REMOVE_TASK = 'REMOVE_TASK';
 export const REMOVE_COLUMN = 'REMOVE_COLUMN';
 export const UPDATE_TASK = 'UPDATE_TASK';
+export const CLEAR_COLUMN_TASKS = 'CLEAR_COLUMN_TASKS';

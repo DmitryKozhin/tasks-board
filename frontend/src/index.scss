@@ -23,6 +23,10 @@ code {
     vertical-align: middle;
   }
 
+  &__error {
+    color: var(--danger);
+  }
+
   &__form {
     margin-left: auto;
     margin-right: auto;
@@ -60,7 +64,7 @@ code {
 }
 
 .column {
-  height: calc(100vh - 205px);
+  height: calc(100vh - 190px);
   min-width: 25%;
   max-width: 25%;
 
@@ -75,7 +79,11 @@ code {
   }
 
   &__add-task {
-    margin: 5px;
+    opacity: 0.5;
+  }
+
+  &__add-task:hover {
+    opacity: 1;
   }
 }
 

@@ -121,12 +121,9 @@ const Column = (props) => {
         onHide={closeModal}
         onSave={createTask}
       />
-      <Button
-        variant="outline-primary column__add-task"
-        size="sm"
-        onClick={showModal}
-      >
-        +
+
+      <Button variant="link column__add-task" size="sm" onClick={showModal}>
+        Add new task...
       </Button>
     </Card>
   );

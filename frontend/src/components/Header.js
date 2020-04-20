@@ -43,9 +43,6 @@ const LoggedInView = (props) => {
             <Dropdown.Item>Settings</Dropdown.Item>
             <Dropdown.Item onClick={props.onLogout}>Logout</Dropdown.Item>
           </DropdownButton>
-          {/* <Link to="/" className="nav-link">
-            
-          </Link> */}
         </li>
       </ul>
     );

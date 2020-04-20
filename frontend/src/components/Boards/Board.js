@@ -8,6 +8,7 @@ import {
   REMOVE_COLUMN,
   UPDATE_COLUMN,
   REMOVE_TASK,
+  CLEAR_COLUMN_TASKS,
 } from '../../constants/actionTypes';
 import agent from '../../agent';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -68,6 +69,11 @@ const mapDispatchToProps = (dispatch) => ({
   },
 
   onChangeTaskOrder: async (updateTaskData) => {
+    dispatch({
+      type: CLEAR_COLUMN_TASKS,
+      payload: { columnId: updateTaskData.column },
+    });
+
     await agent.Task.edit(updateTaskData.task.id, {
       orderNum: updateTaskData.task.orderNum,
     });

@@ -9,6 +9,7 @@ import {
   CREATE_TASK,
   LOGOUT,
   UPDATE_TASK,
+  CLEAR_COLUMN_TASKS,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -97,6 +98,22 @@ export default (state = {}, action) => {
               tasks: column.tasks.filter(
                 (task) => task.id !== action.payload.taskId
               ),
+            }
+          : column
+      );
+
+      return {
+        ...state,
+        columns: [...columns],
+      };
+    }
+
+    case CLEAR_COLUMN_TASKS: {
+      let columns = state.columns.map((column) =>
+        column.id === action.payload.columnId
+          ? {
+              ...column,
+              tasks: [],
             }
           : column
       );

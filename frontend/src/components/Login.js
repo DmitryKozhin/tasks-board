@@ -1,29 +1,23 @@
 import { Link, Redirect } from 'react-router-dom';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
-import { LOGIN, LOGIN_PAGE_UNLOADED } from '../constants/actionTypes';
+import { LOGIN } from '../constants/actionTypes';
 
 const mapStateToProps = (state) => ({
   inProgress: state.auth.inProgress,
   currentUser: state.common.currentUser,
+  errors: state.auth.errors,
 });
 
 const mapDispatchToProps = (dispatch) => ({
   onSubmit: (email, password) =>
     dispatch({ type: LOGIN, payload: agent.Auth.login(email, password) }),
-  onUnload: () => dispatch({ type: LOGIN_PAGE_UNLOADED }),
 });
 
 const Login = (props) => {
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
-
-  useEffect(() => {
-    return () => {
-      props.onUnload();
-    };
-  }, [props]);
 
   const submitForm = useCallback(
     (ev) => {
@@ -46,6 +40,9 @@ const Login = (props) => {
             <p className="text-xs-center">
               <Link to="/register">Need an account?</Link>
             </p>
+            {props.errors ? (
+              <p className="auth__error">{props.errors.Error}</p>
+            ) : null}
 
             <form onSubmit={submitForm}>
               <fieldset>

@@ -71,7 +71,7 @@ namespace TasksBoard.Backend.Features.Users
             public async Task<UserEnvelope> Handle(Command message, CancellationToken cancellationToken)
             {
                 if (await _context.Users.AnyAsync(x => x.Email.Equals(message.User.Email), cancellationToken))
-                    throw new RestException(HttpStatusCode.BadRequest, new { Email = Constants.IN_USE });
+                    throw new RestException(HttpStatusCode.BadRequest, new { Email = $"The Email '{message.User.Email}' is already taken" });
 
                 var salt = Guid.NewGuid().ToByteArray();
                 var user = new User
