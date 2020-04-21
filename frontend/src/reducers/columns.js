@@ -79,7 +79,7 @@ export default (state = {}, action) => {
         column.id === action.payload.task.columnId
           ? {
               ...column,
-              tasks: (column.tasks || []).concat([action.payload.task]),
+              tasks: [...(column.tasks || []), action.payload.task],
             }
           : column
       );

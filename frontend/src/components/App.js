@@ -34,6 +34,7 @@ const App = (props) => {
     }
 
     props.onLoad(token ? agent.Auth.current() : null, token);
+    // eslint-disable-next-line
   }, []);
 
   useEffect(() => {

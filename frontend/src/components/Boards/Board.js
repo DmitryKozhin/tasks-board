@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import Column from './Column';
+import Column from '../Column/Column';
 import { connect } from 'react-redux';
 import { Button, CardGroup } from 'react-bootstrap';
-import AddColumnModal from './AddColumnModal';
+import AddColumnModal from '../Column/AddColumnModal';
 import {
   UPDATE_BOARD,
   REMOVE_COLUMN,
@@ -167,7 +167,7 @@ const Board = (props) => {
       <AddColumnModal
         isShowing={isShowing}
         onHide={closeModal}
-        onCreate={createColumn}
+        onSave={createColumn}
       />
     </div>
   );

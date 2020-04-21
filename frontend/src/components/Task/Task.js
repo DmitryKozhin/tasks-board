@@ -20,25 +20,17 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const Task = (props) => {
-  const [isShowing, setShow] = useState(false);
+  const [isModalShowing, setModalShow] = useState(false);
   const [isEditVisible, setEditVisible] = useState(false);
-
-  const setVisible = useCallback(
-    (isVisible) => {
-      return setEditVisible(isVisible);
-    },
-    [setEditVisible]
-  );
 
   const closeClick = useCallback(() => {
     props.onRemove(props.task.id);
   }, [props]);
 
   const showModal = () => {
-    setVisible(false);
-    return setShow(true);
+    setEditVisible(false);
+    return setModalShow(true);
   };
-  const closeModal = () => setShow(false);
 
   const updateTask = useCallback(
     (header, description) => {
@@ -48,18 +40,19 @@ const Task = (props) => {
       ) {
         props.onEditTask(props.task.id, header, description);
       }
-      setShow(false);
+      setModalShow(false);
     },
-    [props, setShow]
+    [props, setModalShow]
   );
 
   return (
     <Toast
+      onDoubleClick={showModal}
       className="task"
       style={{ borderColor: props.color }}
       onClose={closeClick}
-      onMouseEnter={() => setVisible(true)}
-      onMouseLeave={() => setVisible(false)}
+      onMouseEnter={() => setEditVisible(true)}
+      onMouseLeave={() => setEditVisible(false)}
     >
       <Toast.Header className="task__header">
         <strong className="mr-auto">{props.task.header}</strong>
@@ -74,9 +67,9 @@ const Task = (props) => {
       <Toast.Body>{props.task.description}</Toast.Body>
 
       <AddTaskModal
-        isShowing={isShowing}
+        isShowing={isModalShowing}
         task={props.task}
-        onHide={closeModal}
+        onHide={() => setModalShow(false)}
         onSave={updateTask}
       />
     </Toast>

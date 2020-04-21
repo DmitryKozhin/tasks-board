@@ -7,22 +7,14 @@ const AddTaskModal = (props) => {
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    setHeader(props.task?.header);
-    setDescription(props.task?.description);
+    setHeader(props.task?.header || '');
+    setDescription(props.task?.description || '');
   }, [props, setHeader, setDescription]);
 
   const clearState = useCallback(() => {
     setHeader('');
     setDescription('');
   }, [setHeader, setDescription]);
-
-  const changeHeader = useCallback((ev) => {
-    setHeader(ev.target.value);
-  }, []);
-
-  const changeDescription = useCallback((ev) => {
-    setDescription(ev.target.value);
-  }, []);
 
   const saveAndCloseModal = useCallback(() => {
     props.onSave(header, description);
@@ -43,7 +35,11 @@ const AddTaskModal = (props) => {
         <Form>
           <Form.Group>
             <Form.Label>Header</Form.Label>
-            <Form.Control type="input" onChange={changeHeader} value={header} />
+            <Form.Control
+              type="input"
+              onChange={(ev) => setHeader(ev.target.value)}
+              value={header}
+            />
           </Form.Group>
           <Form.Group>
             <Form.Label>Description</Form.Label>
@@ -52,7 +48,7 @@ const AddTaskModal = (props) => {
               style={{
                 height: props.task?.description ? '15rem' : null,
               }}
-              onChange={changeDescription}
+              onChange={(ev) => setDescription(ev.target.value)}
               value={description}
             />
           </Form.Group>

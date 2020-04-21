@@ -6,17 +6,18 @@ import {
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
   CREATE_BOARD,
+  UPDATE_BOARD,
 } from '../../constants/actionTypes';
 import AddBoardModal from '../Boards/AddBoardModal';
 import { Form, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import Board from '../Boards/Board';
 import { REMOVE_BOARD } from './../../constants/actionTypes';
-import { FaPlus, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaPen } from 'react-icons/fa';
 
 const mapStateToProps = (state) => ({
   ...state.boards,
   token: state.common.token,
-  isShowing: state.boards.isShowing,
+  isModalShowing: state.boards.isModalShowing,
   boards: state.boards.boards,
   selectedBoard: state.boards.selectedBoard,
 });
@@ -37,6 +38,15 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch({ type: CREATE_BOARD, payload });
   },
 
+  onEditBoard: (id, name) => {
+    if (!name) {
+      return;
+    }
+
+    let payload = agent.Board.edit(id, { name });
+    dispatch({ type: UPDATE_BOARD, payload });
+  },
+
   onRemoveBoard: (id) => {
     let payload = agent.Board.delete(id);
     dispatch({
@@ -50,23 +60,36 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const MainView = (props) => {
-  const [isShowing, setShow] = useState(false);
+  const [isModalShowing, setModalShow] = useState(false);
+  const [isEditState, setEdit] = useState(false);
 
   useEffect(() => {
     props.onLoad(agent.Board.all());
+    // eslint-disable-next-line
   }, []);
 
-  const showModal = () => setShow(true);
-  const closeModal = () => setShow(false);
+  const showModal = () => setModalShow(true);
+  const closeModal = () => setModalShow(false);
   const createBoard = (name) => {
     props.onCreateBord(name);
-    setShow(false);
+    setModalShow(false);
   };
 
   const removeBoard = () => {
     if (props.selectedBoard) {
       props.onRemoveBoard(props.selectedBoard.id);
     }
+  };
+
+  const editBoard = () => {
+    setEdit(true);
+    setModalShow(true);
+  };
+
+  const updateBoard = (name) => {
+    props.onEditBoard(props.selectedBoard.id, name);
+    setEdit(false);
+    setModalShow(false);
   };
 
   const selectBoard = (ev) => {
@@ -111,8 +134,19 @@ const MainView = (props) => {
                   <FaPlus />
                 </Button>
               </OverlayTrigger>
+              <OverlayTrigger overlay={<Tooltip>Edit a board</Tooltip>}>
+                <Button
+                  disabled={!props.selectedBoard}
+                  size="sm"
+                  onClick={editBoard}
+                  className="home__add-board"
+                >
+                  <FaPen />
+                </Button>
+              </OverlayTrigger>
               <OverlayTrigger overlay={<Tooltip>Remove a board</Tooltip>}>
                 <Button
+                  disabled={!props.selectedBoard}
                   size="sm"
                   onClick={removeBoard}
                   className="home__add-board"
@@ -134,9 +168,10 @@ const MainView = (props) => {
       )}
 
       <AddBoardModal
-        isShowing={isShowing}
+        isShowing={isModalShowing}
+        board={isEditState ? props.selectedBoard : null}
         onHide={closeModal}
-        onCreate={createBoard}
+        onSave={isEditState ? updateBoard : createBoard}
       />
     </div>
   );
