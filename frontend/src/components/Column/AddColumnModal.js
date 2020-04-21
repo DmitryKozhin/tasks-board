@@ -19,7 +19,7 @@ const AddColumnModal = (props) => {
   }, [setHeader, setColor]);
 
   const handleSubmit = useCallback(() => {
-    props.onSave(header, color.hex || defaultColor);
+    props.onSave(header, color.hex || props.column?.color || defaultColor);
     clearState();
   }, [props, header, color, clearState]);
 
@@ -31,7 +31,7 @@ const AddColumnModal = (props) => {
   return (
     <Modal show={props.isShowing} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Add column</Modal.Title>
+        <Modal.Title>{`${props.column ? 'Edit' : 'Add'} column`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>

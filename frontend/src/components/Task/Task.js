@@ -47,7 +47,6 @@ const Task = (props) => {
 
   return (
     <Toast
-      onDoubleClick={showModal}
       className="task"
       style={{ borderColor: props.color }}
       onClose={closeClick}
