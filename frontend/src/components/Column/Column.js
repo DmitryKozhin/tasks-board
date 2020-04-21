@@ -9,7 +9,7 @@ import {
   UPDATE_COLUMN,
 } from '../../constants/actionTypes';
 import agent from '../../agent';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaPen } from 'react-icons/fa';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 import { useCallback } from 'react';
 import AddColumnModal from './AddColumnModal';
@@ -49,6 +49,7 @@ const mapDispatchToProps = (dispatch) => ({
 const Column = (props) => {
   const [isTaskModalShowing, setTaskModalShow] = useState(false);
   const [isColumnModalShowing, setColumnModalShow] = useState(false);
+  const [isEditVisible, setEditVisible] = useState(false);
 
   const createTask = useCallback(
     (header, description) => {
@@ -66,24 +67,42 @@ const Column = (props) => {
     [props, setColumnModalShow]
   );
 
+  const showModal = () => {
+    setEditVisible(false);
+    return setColumnModalShow(true);
+  };
+
   return (
-    <Card className="column" onDoubleClick={() => setColumnModalShow(true)}>
-      <Card.Header as="h5">
+    <Card className="column">
+      <Card.Header
+        as="h5"
+        onMouseEnter={() => setEditVisible(true)}
+        onMouseLeave={() => setEditVisible(false)}
+      >
         <div className="column__header">
-          <div
+          <span
             className="column__header-name"
             style={{ color: props.column.color }}
           >
             {props.column.header}
+          </span>
+          <div>
+            {isEditVisible ? (
+              <OverlayTrigger overlay={<Tooltip>Edit a column</Tooltip>}>
+                <Button variant="link" size="sm" onClick={showModal}>
+                  <FaPen />
+                </Button>
+              </OverlayTrigger>
+            ) : null}
+            <OverlayTrigger overlay={<Tooltip>Remove a column</Tooltip>}>
+              <Button
+                variant="link"
+                onClick={() => props.onRemoveColumn(props.column.id)}
+              >
+                <FaTimes />
+              </Button>
+            </OverlayTrigger>
           </div>
-          <OverlayTrigger overlay={<Tooltip>Remove a column</Tooltip>}>
-            <Button
-              variant="link"
-              onClick={() => props.onRemoveColumn(props.column.id)}
-            >
-              <FaTimes />
-            </Button>
-          </OverlayTrigger>
         </div>
       </Card.Header>
       <Droppable droppableId={props.column.id} key={props.column.id}>
