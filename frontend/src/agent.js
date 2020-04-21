@@ -17,20 +17,38 @@ const tokenPlugin = (req) => {
   }
 };
 
+var unauthorizedPlugin = (req) => {
+  req.on('response', (res) => {
+    if (res.status === 401) {
+      //TODO: handle redirect to login
+    }
+  });
+};
+
 const requests = {
   del: (url) =>
-    superagent.del(`${API_ROOT}${url}`).use(tokenPlugin).then(responseBody),
+    superagent
+      .del(`${API_ROOT}${url}`)
+      .use(tokenPlugin)
+      .use(unauthorizedPlugin)
+      .then(responseBody),
   get: (url) =>
-    superagent.get(`${API_ROOT}${url}`).use(tokenPlugin).then(responseBody),
+    superagent
+      .get(`${API_ROOT}${url}`)
+      .use(tokenPlugin)
+      .use(unauthorizedPlugin)
+      .then(responseBody),
   put: (url, body) =>
     superagent
       .put(`${API_ROOT}${url}`, body)
       .use(tokenPlugin)
+      .use(unauthorizedPlugin)
       .then(responseBody),
   post: (url, body) =>
     superagent
       .post(`${API_ROOT}${url}`, body)
       .use(tokenPlugin)
+      .use(unauthorizedPlugin)
       .then(responseBody),
 };
 

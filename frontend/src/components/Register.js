@@ -1,12 +1,13 @@
 import { Link, Redirect } from 'react-router-dom';
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
-import { REGISTER, REGISTER_PAGE_UNLOADED } from '../constants/actionTypes';
+import { REGISTER } from '../constants/actionTypes';
 
 const mapStateToProps = (state) => ({
   inProgress: state.auth.inProgress,
   currentUser: state.common.currentUser,
+  errors: state.auth.errors,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -14,19 +15,12 @@ const mapDispatchToProps = (dispatch) => ({
     const payload = agent.Auth.register(username, email, password);
     dispatch({ type: REGISTER, payload });
   },
-  onUnload: () => dispatch({ type: REGISTER_PAGE_UNLOADED }),
 });
 
 const Register = (props) => {
   let [username, setUsername] = useState('');
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
-
-  useEffect(() => {
-    return () => {
-      props.onUnload();
-    };
-  }, [props]);
 
   const changeEmail = useCallback((ev) => {
     setEmail(ev.target.value);
@@ -40,9 +34,9 @@ const Register = (props) => {
   const submitForm = useCallback(
     (ev) => {
       ev.preventDefault();
-      props.onSubmit(props.username, props.email, props.password);
+      props.onSubmit(username, email, password);
     },
-    [props]
+    [props, username, email, password]
   );
 
   if (props.currentUser) {
@@ -58,6 +52,10 @@ const Register = (props) => {
             <p className="text-xs-center">
               <Link to="/login">Have an account?</Link>
             </p>
+
+            {props.errors ? (
+              <p className="auth__error">{props.errors.Email}</p>
+            ) : null}
 
             <form onSubmit={submitForm}>
               <fieldset>

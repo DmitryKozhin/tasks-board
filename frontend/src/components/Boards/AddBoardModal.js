@@ -1,15 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
 const AddBoardModal = (props) => {
   const [name, setName] = useState('');
 
-  const changeName = useCallback((ev) => {
-    setName(ev.target.value);
-  }, []);
+  useEffect(() => {
+    setName(props.board?.name || '');
+  }, [props, setName]);
 
   const saveAndCloseModal = useCallback(() => {
-    props.onCreate(name);
+    props.onSave(name);
     setName('');
   }, [setName, props, name]);
 
@@ -21,7 +21,7 @@ const AddBoardModal = (props) => {
   return (
     <Modal show={props.isShowing} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Add board</Modal.Title>
+        <Modal.Title>{`${props.board ? 'Edit' : 'Add'} board`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -29,8 +29,8 @@ const AddBoardModal = (props) => {
             <Form.Label>Board name</Form.Label>
             <Form.Control
               type="input"
-              onChange={changeName}
-              value={props.name}
+              onChange={(ev) => setName(ev.target.value)}
+              value={name}
             />
             <Form.Text className="text-muted">
               The name of the board must be unique

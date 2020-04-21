@@ -7,6 +7,9 @@ import {
   REMOVE_COLUMN,
   CREATE_BOARD,
   CREATE_TASK,
+  LOGOUT,
+  UPDATE_TASK,
+  CLEAR_COLUMN_TASKS,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -53,12 +56,30 @@ export default (state = {}, action) => {
       };
     }
 
-    case CREATE_TASK: {
+    case UPDATE_TASK: {
       let columns = state.columns.map((column) =>
-        column.id === action.payload.columnId
+        column.id === action.payload.task.columnId
           ? {
               ...column,
-              tasks: (column.tasks || []).concat([action.payload.task]),
+              tasks: column.tasks.map((task) =>
+                task.id === action.payload.task.id ? action.payload.task : task
+              ),
+            }
+          : column
+      );
+
+      return {
+        ...state,
+        columns: [...columns],
+      };
+    }
+
+    case CREATE_TASK: {
+      let columns = state.columns.map((column) =>
+        column.id === action.payload.task.columnId
+          ? {
+              ...column,
+              tasks: [...(column.tasks || []), action.payload.task],
             }
           : column
       );
@@ -84,6 +105,29 @@ export default (state = {}, action) => {
       return {
         ...state,
         columns: [...columns],
+      };
+    }
+
+    case CLEAR_COLUMN_TASKS: {
+      let columns = state.columns.map((column) =>
+        column.id === action.payload.columnId
+          ? {
+              ...column,
+              tasks: [],
+            }
+          : column
+      );
+
+      return {
+        ...state,
+        columns: [...columns],
+      };
+    }
+
+    case LOGOUT: {
+      return {
+        ...state,
+        columns: [],
       };
     }
 

@@ -1,23 +1,39 @@
 import React, { useState } from 'react';
 import { Card, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import Task from './Task';
-import AddTaskModal from './AddTaskModal';
+import Task from '../Task/Task';
+import AddTaskModal from '../Task/AddTaskModal';
 import { connect } from 'react-redux';
-import { REMOVE_TASK, CREATE_TASK } from '../../constants/actionTypes';
+import {
+  REMOVE_TASK,
+  CREATE_TASK,
+  UPDATE_COLUMN,
+} from '../../constants/actionTypes';
 import agent from '../../agent';
 import { FaTimes } from 'react-icons/fa';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { useCallback } from 'react';
+import AddColumnModal from './AddColumnModal';
+
+const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => ({
-  onCreateTask: async (header, description, columnId) => {
+  onEditColumn: (id, header, color) => {
+    const payload = agent.Column.edit(id, { header, color });
+    dispatch({
+      type: UPDATE_COLUMN,
+      payload,
+    });
+  },
+
+  onCreateTask: (header, description, columnId) => {
     if (!header) {
       return;
     }
 
-    let payload = await agent.Task.create(header, description, columnId);
+    let payload = agent.Task.create(header, description, columnId);
     dispatch({
       type: CREATE_TASK,
-      payload: { ...payload, columnId },
+      payload,
     });
   },
 
@@ -31,25 +47,27 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const Column = (props) => {
-  const [isShowing, setShow] = useState(false);
+  const [isTaskModalShowing, setTaskModalShow] = useState(false);
+  const [isColumnModalShowing, setColumnModalShow] = useState(false);
 
-  const showModal = () => setShow(true);
-  const closeModal = () => setShow(false);
-  const createTask = (header, description) => {
-    props.onCreateTask(header, description, props.column.id);
-    setShow(false);
-  };
+  const createTask = useCallback(
+    (header, description) => {
+      props.onCreateTask(header, description, props.column.id);
+      setTaskModalShow(false);
+    },
+    [props, setTaskModalShow]
+  );
 
-  const removeClick = () => {
-    props.onRemoveColumn(props.column.id);
-  };
-
-  const removeTask = (id) => {
-    props.onRemoveTask(id, props.column.id);
-  };
+  const updateColumn = useCallback(
+    (header, color) => {
+      props.onEditColumn(props.column.id, header, color);
+      setColumnModalShow(false);
+    },
+    [props, setColumnModalShow]
+  );
 
   return (
-    <Card className="column">
+    <Card className="column" onDoubleClick={() => setColumnModalShow(true)}>
       <Card.Header as="h5">
         <div className="column__header">
           <div
@@ -59,7 +77,10 @@ const Column = (props) => {
             {props.column.header}
           </div>
           <OverlayTrigger overlay={<Tooltip>Remove a column</Tooltip>}>
-            <Button variant="link" onClick={removeClick}>
+            <Button
+              variant="link"
+              onClick={() => props.onRemoveColumn(props.column.id)}
+            >
               <FaTimes />
             </Button>
           </OverlayTrigger>
@@ -96,7 +117,9 @@ const Column = (props) => {
                             task={task}
                             key={task.id}
                             color={props.column.color}
-                            onRemove={removeTask}
+                            onRemove={() =>
+                              props.onRemoveTask(task.id, props.column.id)
+                            }
                           />
                         </div>
                       );
@@ -110,20 +133,28 @@ const Column = (props) => {
         }}
       </Droppable>
 
-      <AddTaskModal
-        isShowing={isShowing}
-        onHide={closeModal}
-        onCreate={createTask}
+      <AddColumnModal
+        isShowing={isColumnModalShowing}
+        column={props.column}
+        onHide={() => setColumnModalShow(false)}
+        onSave={updateColumn}
       />
+
+      <AddTaskModal
+        isShowing={isTaskModalShowing}
+        onHide={() => setTaskModalShow(false)}
+        onSave={createTask}
+      />
+
       <Button
-        variant="outline-primary column__add-task"
+        variant="link column__add-task"
         size="sm"
-        onClick={showModal}
+        onClick={() => setTaskModalShow(true)}
       >
-        +
+        Add new task...
       </Button>
     </Card>
   );
 };
 
-export default connect(mapDispatchToProps)(Column);
+export default connect(mapStateToProps, mapDispatchToProps)(Column);

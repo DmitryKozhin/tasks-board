@@ -4,6 +4,7 @@ import {
   MAIN_VIEW_LOAD,
   SELECT_BOARD,
   UPDATE_BOARD,
+  LOGOUT,
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -21,7 +22,7 @@ export default (state = {}, action) => {
         ...state,
         boards: action.error
           ? null
-          : (state.boards || []).concat([action.payload.board]),
+          : [...(state.boards || []), action.payload.board],
         selectedBoard: action.payload.board,
       };
     case MAIN_VIEW_LOAD: {
@@ -31,11 +32,27 @@ export default (state = {}, action) => {
       };
     }
 
-    case UPDATE_BOARD:
+    case UPDATE_BOARD: {
+      return {
+        ...state,
+        boards: state.boards.map((board) =>
+          board.id === action.payload.board.id ? action.payload.board : board
+        ),
+        selectedBoard: action.error ? null : action.payload.board,
+      };
+    }
     case SELECT_BOARD: {
       return {
         ...state,
         selectedBoard: action.error ? null : action.payload.board,
+      };
+    }
+
+    case LOGOUT: {
+      return {
+        ...state,
+        selectedBoard: null,
+        boards: [],
       };
     }
     default:

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import Column from './Column';
+import Column from '../Column/Column';
 import { connect } from 'react-redux';
 import { Button, CardGroup } from 'react-bootstrap';
-import AddColumnModal from './AddColumnModal';
+import AddColumnModal from '../Column/AddColumnModal';
 import {
   UPDATE_BOARD,
   REMOVE_COLUMN,
   UPDATE_COLUMN,
   REMOVE_TASK,
+  CLEAR_COLUMN_TASKS,
 } from '../../constants/actionTypes';
 import agent from '../../agent';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { useCallback } from 'react';
 
 const mapStateToProps = (state) => ({
   board: state.boards.selectedBoard,
@@ -53,28 +55,33 @@ const mapDispatchToProps = (dispatch) => ({
       orderNum: updateTaskData.task.orderNum,
     });
 
-    let oldColumn = await agent.Column.get(updateTaskData.oldColumn);
+    let oldColumnPayload = agent.Column.get(updateTaskData.oldColumn);
     dispatch({
       type: UPDATE_COLUMN,
-      payload: { ...oldColumn },
+      payload: oldColumnPayload,
     });
 
-    let newColumn = await agent.Column.get(updateTaskData.newColumn);
+    let newColumnPayload = agent.Column.get(updateTaskData.newColumn);
     dispatch({
       type: UPDATE_COLUMN,
-      payload: { ...newColumn },
+      payload: newColumnPayload,
     });
   },
 
   onChangeTaskOrder: async (updateTaskData) => {
+    dispatch({
+      type: CLEAR_COLUMN_TASKS,
+      payload: { columnId: updateTaskData.column },
+    });
+
     await agent.Task.edit(updateTaskData.task.id, {
       orderNum: updateTaskData.task.orderNum,
     });
 
-    let column = await agent.Column.get(updateTaskData.column);
-    dispatch({
+    let payload = agent.Column.get(updateTaskData.column);
+    return dispatch({
       type: UPDATE_COLUMN,
-      payload: { ...column },
+      payload,
     });
   },
 });
@@ -84,10 +91,13 @@ const Board = (props) => {
 
   const showModal = () => setShow(true);
   const closeModal = () => setShow(false);
-  const createColumn = (header, color) => {
-    props.onCreateColumn(header, color, props.board.id);
-    setShow(false);
-  };
+  const createColumn = useCallback(
+    (header, color) => {
+      props.onCreateColumn(header, color, props.board.id);
+      setShow(false);
+    },
+    [props, setShow]
+  );
 
   const onDragEnd = (result, columns, changeSource, changeOrder) => {
     if (!result.destination) return;
@@ -110,9 +120,9 @@ const Board = (props) => {
     } else {
       const column = columns.find((column) => column.id === source.droppableId);
       const sourceTasks = [...column.tasks];
-      const [removed] = sourceTasks.splice(source.index, 1);
+      const [changed] = sourceTasks.splice(source.index, 1);
       changeOrder({
-        task: { ...removed, orderNum: destination.index },
+        task: { ...changed, orderNum: destination.index },
         column: column.id,
       });
     }
@@ -152,13 +162,13 @@ const Board = (props) => {
             <span>Current board doesn't have any columns!</span>
           )}
         </DragDropContext>
-
-        <AddColumnModal
-          isShowing={isShowing}
-          onHide={closeModal}
-          onCreate={createColumn}
-        />
       </CardGroup>
+
+      <AddColumnModal
+        isShowing={isShowing}
+        onHide={closeModal}
+        onSave={createColumn}
+      />
     </div>
   );
 };

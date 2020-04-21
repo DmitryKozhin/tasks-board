@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { SketchPicker } from 'react-color';
 
@@ -8,21 +8,18 @@ const AddColumnModal = (props) => {
   const [header, setHeader] = useState('');
   const [color, setColor] = useState(defaultColor);
 
+  useEffect(() => {
+    setHeader(props.column?.header || '');
+    setColor(props.column?.color || defaultColor);
+  }, [props, setHeader, setColor]);
+
   const clearState = useCallback(() => {
     setHeader('');
     setColor(defaultColor);
   }, [setHeader, setColor]);
 
-  const changeHeader = useCallback((ev) => {
-    setHeader(ev.target.value);
-  }, []);
-
-  const changeColor = useCallback((color) => {
-    setColor(color);
-  }, []);
-
   const handleSubmit = useCallback(() => {
-    props.onCreate(header, color.hex || defaultColor);
+    props.onSave(header, color.hex || defaultColor);
     clearState();
   }, [props, header, color, clearState]);
 
@@ -43,13 +40,16 @@ const AddColumnModal = (props) => {
             <Form.Control
               type="input"
               required
-              onChange={changeHeader}
+              onChange={(ev) => setHeader(ev.target.value)}
               value={header}
             />
           </Form.Group>
           <Form.Group>
             <Form.Label>Color</Form.Label>
-            <SketchPicker color={color} onChangeComplete={changeColor} />
+            <SketchPicker
+              color={color}
+              onChangeComplete={(color) => setColor(color)}
+            />
           </Form.Group>
         </Form>
       </Modal.Body>

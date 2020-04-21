@@ -58,6 +58,7 @@ namespace TasksBoard.Backend.Features.Boards
             {
                 var board = await _context.Boards
                     .Include(t => t.Columns)
+                    .ThenInclude(t => t.Tasks)
                     .Include(t => t.UserBoards)
                     .ThenInclude(t => t.User)
                     .SingleOrDefaultAsync(t => t.Id == request.BoardId, cancellationToken);
