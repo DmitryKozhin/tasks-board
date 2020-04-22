@@ -4,11 +4,11 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { APP_LOAD, REDIRECT, LOGOUT } from '../constants/actionTypes';
 import { Route, Switch } from 'react-router-dom';
-import Home from '../components/Home';
 import Login from '../components/Login';
 import Register from '../components/Register';
 import { store } from '../store';
 import { push } from 'react-router-redux';
+import Home from './Home';
 
 const mapStateToProps = (state) => {
   return {

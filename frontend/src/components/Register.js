@@ -22,21 +22,12 @@ const Register = (props) => {
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
 
-  const changeEmail = useCallback((ev) => {
-    setEmail(ev.target.value);
-  }, []);
-  const changePassword = useCallback((ev) => {
-    setPassword(ev.target.value);
-  }, []);
-  const changeUsername = useCallback((ev) => {
-    setUsername(ev.target.value);
-  }, []);
   const submitForm = useCallback(
     (ev) => {
       ev.preventDefault();
       props.onSubmit(username, email, password);
     },
-    [props, username, email, password]
+    [props.onSubmit, username, email, password]
   );
 
   if (props.currentUser) {
@@ -65,7 +56,7 @@ const Register = (props) => {
                     type="text"
                     placeholder="Username"
                     value={username}
-                    onChange={changeUsername}
+                    onChange={(ev) => setUsername(ev.target.value)}
                   />
                 </fieldset>
 
@@ -75,7 +66,7 @@ const Register = (props) => {
                     type="email"
                     placeholder="Email"
                     value={email}
-                    onChange={changeEmail}
+                    onChange={(ev) => setEmail(ev.target.value)}
                   />
                 </fieldset>
 
@@ -85,7 +76,7 @@ const Register = (props) => {
                     type="password"
                     placeholder="Password"
                     value={password}
-                    onChange={changePassword}
+                    onChange={(ev) => setPassword(ev.target.value)}
                   />
                 </fieldset>
 

@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { DropdownButton, ButtonGroup } from 'react-bootstrap';
 import { Dropdown } from 'react-bootstrap';
 
-const LoggedOutView = (props) => {
-  if (!props.currentUser) {
+const LoggedOutView = ({ currentUser }) => {
+  if (!currentUser) {
     return (
       <ul className="nav">
         <li className="nav-item">
@@ -24,8 +24,8 @@ const LoggedOutView = (props) => {
   return null;
 };
 
-const LoggedInView = (props) => {
-  if (props.currentUser) {
+const LoggedInView = ({ currentUser, onLogout }) => {
+  if (currentUser) {
     return (
       <ul className="nav">
         <li className="nav-item">
@@ -38,10 +38,10 @@ const LoggedInView = (props) => {
           <DropdownButton
             variant="link"
             as={ButtonGroup}
-            title={props.currentUser.email}
+            title={currentUser.email}
           >
             <Dropdown.Item>Settings</Dropdown.Item>
-            <Dropdown.Item onClick={props.onLogout}>Logout</Dropdown.Item>
+            <Dropdown.Item onClick={onLogout}>Logout</Dropdown.Item>
           </DropdownButton>
         </li>
       </ul>
@@ -51,15 +51,15 @@ const LoggedInView = (props) => {
   return null;
 };
 
-const Header = (props) => {
+const Header = ({ appName, currentUser, onLogout }) => {
   return (
     <nav className="navbar navbar-light">
       <Link to="/" className="navbar-brand">
-        {props.appName}
+        {appName}
       </Link>
 
-      <LoggedInView currentUser={props.currentUser} onLogout={props.onLogout} />
-      <LoggedOutView currentUser={props.currentUser} />
+      <LoggedInView currentUser={currentUser} onLogout={onLogout} />
+      <LoggedOutView currentUser={currentUser} />
     </nav>
   );
 };

@@ -8,11 +8,12 @@ import {
   CREATE_BOARD,
   UPDATE_BOARD,
 } from '../../constants/actionTypes';
-import AddBoardModal from '../Boards/AddBoardModal';
+import AddBoardModal from '../Board/AddBoardModal';
 import { Form, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import Board from '../Boards/Board';
-import { REMOVE_BOARD } from './../../constants/actionTypes';
+import Board from '../Board/Board';
+import { REMOVE_BOARD } from '../../constants/actionTypes';
 import { FaPlus, FaTrash, FaPen } from 'react-icons/fa';
+import { useCallback } from 'react';
 
 const mapStateToProps = (state) => ({
   ...state.boards,
@@ -66,31 +67,37 @@ const MainView = (props) => {
   useEffect(() => {
     props.onLoad(agent.Board.all());
     // eslint-disable-next-line
-  }, []);
+  }, [props.onLoad]);
 
   const showModal = () => setModalShow(true);
   const closeModal = () => setModalShow(false);
-  const createBoard = (name) => {
-    props.onCreateBord(name);
-    setModalShow(false);
-  };
+  const createBoard = useCallback(
+    (name) => {
+      props.onCreateBord(name);
+      setModalShow(false);
+    },
+    [props.onCreateBord, setModalShow]
+  );
 
-  const removeBoard = () => {
+  const removeBoard = useCallback(() => {
     if (props.selectedBoard) {
       props.onRemoveBoard(props.selectedBoard.id);
     }
-  };
+  }, [props.selectedBoard, props.onRemoveBoard]);
 
   const editBoard = () => {
     setEdit(true);
     setModalShow(true);
   };
 
-  const updateBoard = (name) => {
-    props.onEditBoard(props.selectedBoard.id, name);
-    setEdit(false);
-    setModalShow(false);
-  };
+  const updateBoard = useCallback(
+    (name) => {
+      props.onEditBoard(props.selectedBoard.id, name);
+      setEdit(false);
+      setModalShow(false);
+    },
+    [props.selectedBoard, props.onEditBoard]
+  );
 
   const selectBoard = (ev) => {
     props.onSelectBoard(ev.target.value);

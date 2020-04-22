@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import Task from '../Task/Task';
 import AddTaskModal from '../Task/AddTaskModal';
 import { connect } from 'react-redux';
 import {
@@ -11,8 +10,8 @@ import {
 import agent from '../../agent';
 import { FaTimes, FaPen } from 'react-icons/fa';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
-import { useCallback } from 'react';
 import AddColumnModal from './AddColumnModal';
+import Task from './../Task/Task';
 
 const mapStateToProps = (state) => ({});
 
@@ -46,25 +45,25 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-const Column = (props) => {
+const Column = ({ column, onRemoveColumn, ...props }) => {
   const [isTaskModalShowing, setTaskModalShow] = useState(false);
   const [isColumnModalShowing, setColumnModalShow] = useState(false);
   const [isEditVisible, setEditVisible] = useState(false);
 
   const createTask = useCallback(
     (header, description) => {
-      props.onCreateTask(header, description, props.column.id);
+      props.onCreateTask(header, description, column.id);
       setTaskModalShow(false);
     },
-    [props, setTaskModalShow]
+    [column, props.onCreateTask, setTaskModalShow]
   );
 
   const updateColumn = useCallback(
     (header, color) => {
-      props.onEditColumn(props.column.id, header, color);
+      props.onEditColumn(column.id, header, color);
       setColumnModalShow(false);
     },
-    [props, setColumnModalShow]
+    [column, props.onEditColumn, setColumnModalShow]
   );
 
   const showModal = () => {
@@ -80,11 +79,8 @@ const Column = (props) => {
         onMouseLeave={() => setEditVisible(false)}
       >
         <div className="column__header">
-          <span
-            className="column__header-name"
-            style={{ color: props.column.color }}
-          >
-            {props.column.header}
+          <span className="column__header-name" style={{ color: column.color }}>
+            {column.header}
           </span>
           <div>
             {isEditVisible ? (
@@ -95,17 +91,14 @@ const Column = (props) => {
               </OverlayTrigger>
             ) : null}
             <OverlayTrigger overlay={<Tooltip>Remove a column</Tooltip>}>
-              <Button
-                variant="link"
-                onClick={() => props.onRemoveColumn(props.column.id)}
-              >
+              <Button variant="link" onClick={() => onRemoveColumn(column.id)}>
                 <FaTimes />
               </Button>
             </OverlayTrigger>
           </div>
         </div>
       </Card.Header>
-      <Droppable droppableId={props.column.id} key={props.column.id}>
+      <Droppable droppableId={column.id} key={column.id}>
         {(provided, snapshot) => {
           return (
             <Card.Body
@@ -113,7 +106,7 @@ const Column = (props) => {
               {...provided.droppableProps}
               ref={provided.innerRef}
             >
-              {props.column.tasks?.map((task) => {
+              {column.tasks?.map((task) => {
                 return (
                   <Draggable
                     key={task.id}
@@ -135,9 +128,9 @@ const Column = (props) => {
                           <Task
                             task={task}
                             key={task.id}
-                            color={props.column.color}
+                            color={column.color}
                             onRemove={() =>
-                              props.onRemoveTask(task.id, props.column.id)
+                              props.onRemoveTask(task.id, column.id)
                             }
                           />
                         </div>
@@ -154,7 +147,7 @@ const Column = (props) => {
 
       <AddColumnModal
         isShowing={isColumnModalShowing}
-        column={props.column}
+        column={column}
         onHide={() => setColumnModalShow(false)}
         onSave={updateColumn}
       />

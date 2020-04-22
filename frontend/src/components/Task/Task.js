@@ -19,13 +19,13 @@ const mapDispatchToProps = (dispatch) => ({
   },
 });
 
-const Task = (props) => {
+const Task = ({ task, color, onRemove, ...props }) => {
   const [isModalShowing, setModalShow] = useState(false);
   const [isEditVisible, setEditVisible] = useState(false);
 
-  const closeClick = useCallback(() => {
-    props.onRemove(props.task.id);
-  }, [props]);
+  const removeClick = useCallback(() => {
+    onRemove(task.id);
+  }, [task]);
 
   const showModal = () => {
     setEditVisible(false);
@@ -34,27 +34,24 @@ const Task = (props) => {
 
   const updateTask = useCallback(
     (header, description) => {
-      if (
-        header !== props.task.header ||
-        description !== props.task.description
-      ) {
-        props.onEditTask(props.task.id, header, description);
+      if (header !== task.header || description !== task.description) {
+        props.onEditTask(task.id, header, description);
       }
       setModalShow(false);
     },
-    [props, setModalShow]
+    [task, props.onEditTask, setModalShow]
   );
 
   return (
     <Toast
       className="task"
-      style={{ borderColor: props.color }}
-      onClose={closeClick}
+      style={{ borderColor: color }}
+      onClose={removeClick}
       onMouseEnter={() => setEditVisible(true)}
       onMouseLeave={() => setEditVisible(false)}
     >
       <Toast.Header className="task__header">
-        <strong className="mr-auto">{props.task.header}</strong>
+        <strong className="mr-auto">{task.header}</strong>
         {isEditVisible ? (
           <OverlayTrigger overlay={<Tooltip>Edit a task</Tooltip>}>
             <Button variant="link" size="sm" onClick={showModal}>
@@ -63,11 +60,11 @@ const Task = (props) => {
           </OverlayTrigger>
         ) : null}
       </Toast.Header>
-      <Toast.Body>{props.task.description}</Toast.Body>
+      <Toast.Body>{task.description}</Toast.Body>
 
       <AddTaskModal
         isShowing={isModalShowing}
-        task={props.task}
+        task={task}
         onHide={() => setModalShow(false)}
         onSave={updateTask}
       />

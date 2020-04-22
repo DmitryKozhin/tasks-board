@@ -4,34 +4,34 @@ import { SketchPicker } from 'react-color';
 
 const defaultColor = '#3486eb';
 
-const AddColumnModal = (props) => {
+const AddColumnModal = ({ column, isShowing, onSave, onHide }) => {
   const [header, setHeader] = useState('');
   const [color, setColor] = useState(defaultColor);
 
   useEffect(() => {
-    setHeader(props.column?.header || '');
-    setColor(props.column?.color || defaultColor);
-  }, [props, setHeader, setColor]);
+    setHeader(column?.header || '');
+    setColor(column?.color || defaultColor);
+  }, [column, setHeader, setColor]);
 
   const clearState = useCallback(() => {
     setHeader('');
     setColor(defaultColor);
   }, [setHeader, setColor]);
 
-  const handleSubmit = useCallback(() => {
-    props.onSave(header, color.hex || props.column?.color || defaultColor);
+  const saveAndCloseModal = useCallback(() => {
+    onSave(header, color.hex || column?.color || defaultColor);
     clearState();
-  }, [props, header, color, clearState]);
+  }, [header, color, onSave, clearState]);
 
-  const onHide = useCallback(() => {
-    props.onHide();
+  const hide = useCallback(() => {
+    onHide();
     clearState();
-  }, [props, clearState]);
+  }, [onHide, clearState]);
 
   return (
-    <Modal show={props.isShowing} onHide={onHide}>
+    <Modal show={isShowing} onHide={hide}>
       <Modal.Header closeButton>
-        <Modal.Title>{`${props.column ? 'Edit' : 'Add'} column`}</Modal.Title>
+        <Modal.Title>{`${column ? 'Edit' : 'Add'} column`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -54,10 +54,10 @@ const AddColumnModal = (props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={hide}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleSubmit}>
+        <Button variant="primary" onClick={saveAndCloseModal}>
           Save
         </Button>
       </Modal.Footer>

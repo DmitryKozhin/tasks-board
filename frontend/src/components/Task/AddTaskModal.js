@@ -2,14 +2,14 @@ import React, { useCallback, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useEffect } from 'react';
 
-const AddTaskModal = (props) => {
+const AddTaskModal = ({ task, isShowing, onSave, onHide }) => {
   const [header, setHeader] = useState('');
   const [description, setDescription] = useState('');
 
   useEffect(() => {
-    setHeader(props.task?.header || '');
-    setDescription(props.task?.description || '');
-  }, [props, setHeader, setDescription]);
+    setHeader(task?.header || '');
+    setDescription(task?.description || '');
+  }, [task, setHeader, setDescription]);
 
   const clearState = useCallback(() => {
     setHeader('');
@@ -17,19 +17,19 @@ const AddTaskModal = (props) => {
   }, [setHeader, setDescription]);
 
   const saveAndCloseModal = useCallback(() => {
-    props.onSave(header, description);
+    onSave(header, description);
     clearState();
-  }, [props, header, description, clearState]);
+  }, [header, description, onSave, clearState]);
 
-  const onHide = useCallback(() => {
-    props.onHide();
+  const hide = useCallback(() => {
+    onHide();
     clearState();
-  }, [props, clearState]);
+  }, [onHide, clearState]);
 
   return (
-    <Modal show={props.isShowing} onHide={onHide}>
+    <Modal show={isShowing} onHide={hide}>
       <Modal.Header closeButton>
-        <Modal.Title>{`${props.task ? 'Edit' : 'Add'} task`}</Modal.Title>
+        <Modal.Title>{`${task ? 'Edit' : 'Add'} task`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -46,7 +46,7 @@ const AddTaskModal = (props) => {
             <Form.Control
               as="textarea"
               style={{
-                height: props.task?.description ? '15rem' : null,
+                height: task?.description ? '15rem' : null,
               }}
               onChange={(ev) => setDescription(ev.target.value)}
               value={description}
@@ -55,7 +55,7 @@ const AddTaskModal = (props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={hide}>
           Close
         </Button>
         <Button variant="primary" onClick={saveAndCloseModal}>

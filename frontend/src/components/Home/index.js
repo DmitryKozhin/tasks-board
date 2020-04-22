@@ -23,13 +23,13 @@ const mapDispatchToProps = (dispatch) => ({
 const Home = (props) => {
   useEffect(() => {
     props.onLoad();
-  }, [props]);
+  }, [props.onLoad]);
 
   useEffect(() => {
     return () => {
       props.onUnload();
     };
-  }, [props]);
+  }, [props.onUnload]);
 
   return (
     <div className="home-page">

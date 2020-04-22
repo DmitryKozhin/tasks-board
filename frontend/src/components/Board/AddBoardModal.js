@@ -1,27 +1,27 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 
-const AddBoardModal = (props) => {
+const AddBoardModal = ({ board, isShowing, onSave, onHide }) => {
   const [name, setName] = useState('');
 
   useEffect(() => {
-    setName(props.board?.name || '');
-  }, [props, setName]);
+    setName(board?.name || '');
+  }, [board, setName]);
 
   const saveAndCloseModal = useCallback(() => {
-    props.onSave(name);
+    onSave(name);
     setName('');
-  }, [setName, props, name]);
+  }, [setName, onSave, name]);
 
-  const onHide = useCallback(() => {
-    props.onHide();
+  const hide = useCallback(() => {
+    onHide();
     setName('');
-  }, [setName, props]);
+  }, [setName, onHide]);
 
   return (
-    <Modal show={props.isShowing} onHide={onHide}>
+    <Modal show={isShowing} onHide={hide}>
       <Modal.Header closeButton>
-        <Modal.Title>{`${props.board ? 'Edit' : 'Add'} board`}</Modal.Title>
+        <Modal.Title>{`${board ? 'Edit' : 'Add'} board`}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -39,7 +39,7 @@ const AddBoardModal = (props) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={hide}>
           Close
         </Button>
         <Button variant="primary" onClick={saveAndCloseModal}>

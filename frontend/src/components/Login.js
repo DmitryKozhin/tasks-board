@@ -24,7 +24,7 @@ const Login = (props) => {
       ev.preventDefault();
       props.onSubmit(email, password);
     },
-    [props, email, password]
+    [props.onSubmit, email, password]
   );
 
   if (props.currentUser) {
